@@ -71,7 +71,6 @@ resource "talos_machine_configuration_apply" "controlplane" {
         vip_interface                      = var.cluster.vip_interface
         cilium_values                      = file("${path.module}/kubernetes/cilium-values.yaml")
         cilium_install                     = file("${path.module}/kubernetes/cilium-install.yaml")
-        zfs_setup                          = file("${path.module}/kubernetes/zfs-setup.yaml")
       }),
     ],
     # Add GPU patch if this control plane node has a GPU

@@ -2,7 +2,6 @@ customization:
   systemExtensions:
     officialExtensions:
       - siderolabs/qemu-guest-agent
-      - siderolabs/zfs
       - siderolabs/iscsi-tools
       - siderolabs/util-linux-tools
 #      - siderolabs/lldpd

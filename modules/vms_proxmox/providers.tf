@@ -1,6 +1,8 @@
 provider "proxmox" {
   endpoint           = var.proxmox.endpoint
   api_token          = var.proxmox.api_token
+  username           = var.proxmox.username != null ? "${var.proxmox.username}@${var.proxmox.realm}" : null
+  password           = var.proxmox.password
   insecure           = var.proxmox.insecure
   tmp_dir            = "/tmp"
   random_vm_ids      = var.proxmox.random_vm_ids

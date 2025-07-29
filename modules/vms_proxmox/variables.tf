@@ -5,6 +5,7 @@ variable "proxmox" {
     insecure           = bool
     username           = string
     password           = optional(string)
+    realm              = optional(string, "pam")
     api_token          = optional(string)
     ssh_agent          = optional(string, false)
     random_vm_ids      = optional(string, false)

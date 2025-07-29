@@ -19,5 +19,6 @@ variable "nodes" {
     ip           = string
     install_disk = optional(string, "/dev/sda")
     gpu          = optional(string)
+    time_server  = optional(string)
   }))
 }

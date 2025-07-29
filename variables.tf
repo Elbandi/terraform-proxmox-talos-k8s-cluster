@@ -56,6 +56,7 @@ variable "vms" {
     install_disk     = optional(string, "/dev/sda")
     disk_file_format = optional(string, "raw")
     gpu              = optional(string)
+    time_server      = optional(string)
   }))
 }
 

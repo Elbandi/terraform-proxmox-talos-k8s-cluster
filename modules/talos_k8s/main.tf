@@ -69,6 +69,7 @@ resource "talos_machine_configuration_apply" "controlplane" {
         allow_scheduling_on_control_planes = var.cluster.allow_scheduling_on_control_planes
         vip_ip                             = var.cluster.vip_ip
         vip_interface                      = var.cluster.vip_interface
+        time_server                        = each.value.time_server
         cilium_values                      = file("${path.module}/kubernetes/cilium-values.yaml")
         cilium_install                     = file("${path.module}/kubernetes/cilium-install.yaml")
       }),
@@ -93,6 +94,7 @@ resource "talos_machine_configuration_apply" "worker" {
     [
       templatefile("${path.module}/config/worker.yaml.tmpl", {
         install_disk = each.value.install_disk
+        time_server  = each.value.time_server
       }),
     ],
     # Add GPU patch if this worker node has a GPU

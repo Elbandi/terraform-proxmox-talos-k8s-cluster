@@ -5,7 +5,7 @@ machine:
     disk: ${install_disk}
   time:
     servers:
-      - /dev/ptp0
+      - %{ if time_server != null && time_server != "" }${time_server}%{ else }pool.ntp.org%{ endif }
   kubelet:
     extraArgs:
       rotate-server-certificates: true

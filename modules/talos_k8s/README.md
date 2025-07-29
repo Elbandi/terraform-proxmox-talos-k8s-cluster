@@ -35,7 +35,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_cluster"></a> [cluster](#input\_cluster) | Cluster configuration | <pre>object({<br/>    name                               = string<br/>    talos_version                      = optional(string)<br/>    kubernetes_version                 = optional(string)<br/>    endpoint                           = string<br/>    network_dhcp                       = optional(bool, false)<br/>    allow_scheduling_on_control_planes = optional(bool, true)<br/>    vip_ip                             = optional(string)<br/>    vip_interface                      = optional(string, "eth0")<br/>  })</pre> | n/a | yes |
-| <a name="input_nodes"></a> [nodes](#input\_nodes) | Configuration for worker nodes | <pre>map(object({<br/>    machine_type = string<br/>    ip           = string<br/>    install_disk = optional(string, "/dev/sda")<br/>    gpu          = optional(string)<br/>  }))</pre> | n/a | yes |
+| <a name="input_nodes"></a> [nodes](#input\_nodes) | Configuration for worker nodes | <pre>map(object({<br/>    machine_type = string<br/>    ip           = string<br/>    install_disk = optional(string, "/dev/sda")<br/>    gpu          = optional(string)<br/>    time_server  = optional(string)<br/>  }))</pre> | n/a | yes |
 
 ## Outputs
 

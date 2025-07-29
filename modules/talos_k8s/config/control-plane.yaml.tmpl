@@ -13,7 +13,7 @@ machine:
 # https://www.talos.dev/v1.7/talos-guides/configuration/time-sync/#additional-configuration
   time:
     servers:
-      - /dev/ptp0
+      - pool.ntp.org
   kubelet:
     extraArgs:
       rotate-server-certificates: true

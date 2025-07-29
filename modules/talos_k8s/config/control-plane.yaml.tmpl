@@ -13,7 +13,23 @@ machine:
     kubePrism:
       enabled: true
       port: 7445
+  files:
+    - content: |
+        [metrics]
+          address = "0.0.0.0:11234"
+      path: /var/cri/conf.d/metrics.toml
+      op: create
+
 cluster:
+  etcd:
+    extraArgs:
+      listen-metrics-urls: http://0.0.0.0:2381
+  controllerManager:
+    extraArgs:
+      bind-address: 0.0.0.0
+  scheduler:
+    extraArgs:
+      bind-address: 0.0.0.0
   allowSchedulingOnControlPlanes: ${allow_scheduling_on_control_planes}
   # Cilium CNI
   network:

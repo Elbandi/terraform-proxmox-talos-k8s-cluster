@@ -42,7 +42,6 @@ resource "talos_machine_configuration_apply" "controlplane" {
       install_disk   = each.value.install_disk
       cilium_values  = file("${path.module}/kubernetes/cilium-values.yaml")
       cilium_install = file("${path.module}/kubernetes/cilium-install.yaml")
-      zfs_setup      = file("${path.module}/kubernetes/zfs-setup.yaml")
     }),
     file("${path.module}/config/falco-patch.yaml"),
   ]

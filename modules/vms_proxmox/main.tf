@@ -7,6 +7,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
   tags    = ["terraform", "talos", "k8s", each.value.machine_type, var.cluster.name]
   on_boot = true
   started = true
+  vm_id   = each.value.vm_id
 
   machine       = "q35"
   scsi_hardware = "virtio-scsi-single"
@@ -37,6 +38,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
     iothread     = true
     cache        = "writethrough"
     discard      = "on"
+    ssd          = true
     file_format  = each.value.disk_file_format
     size         = each.value.os_disk_size
     file_id      = proxmox_virtual_environment_download_file.this["${each.value.host_node}_${each.value.gpu != null ? local.image_nvidia_id : local.image_id}"].id
@@ -49,6 +51,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
     iothread     = true
     cache        = "writethrough"
     discard      = "on"
+    ssd          = true
     file_format  = each.value.disk_file_format
     size         = each.value.data_disk_size
   }

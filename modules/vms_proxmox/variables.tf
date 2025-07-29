@@ -41,6 +41,7 @@ variable "vms" {
   type = map(object({
     host_node        = string
     machine_type     = string
+    vm_id            = optional(number)
     datastore_id     = optional(string, "local-lvm")
     ip               = string
     cpu              = number

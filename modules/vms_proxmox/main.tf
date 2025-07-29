@@ -7,6 +7,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
   tags    = ["terraform", "talos", "k8s", each.value.machine_type, var.cluster.name]
   on_boot = true
   started = true
+  vm_id   = each.value.vm_id
 
   bios          = "ovmf"
   machine       = "q35"

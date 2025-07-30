@@ -70,6 +70,7 @@ resource "talos_machine_configuration_apply" "controlplane" {
         vip_ip                             = var.cluster.vip_ip
         vip_interface                      = var.cluster.vip_interface
         time_server                        = each.value.time_server
+        kernel_modules                     = each.value.kernel_modules
         cilium_values                      = file("${path.module}/kubernetes/cilium-values.yaml")
         cilium_install                     = file("${path.module}/kubernetes/cilium-install.yaml")
       }),
@@ -93,8 +94,9 @@ resource "talos_machine_configuration_apply" "worker" {
   config_patches = concat(
     [
       templatefile("${path.module}/config/worker.yaml.tmpl", {
-        install_disk = each.value.install_disk
-        time_server  = each.value.time_server
+        install_disk   = each.value.install_disk
+        time_server    = each.value.time_server
+        kernel_modules = each.value.kernel_modules
       }),
     ],
     # Add GPU patch if this worker node has a GPU

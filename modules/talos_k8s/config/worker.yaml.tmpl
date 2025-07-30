@@ -9,6 +9,11 @@ machine:
   kubelet:
     extraArgs:
       rotate-server-certificates: true
+  kernel:
+    modules:
+%{ for mod in kernel_modules ~}
+      - name: ${mod}
+%{ endfor ~}
   features:
     kubePrism:
       enabled: true

@@ -29,6 +29,14 @@ data:
         enabled: true
       ui:
         enabled: true
+      metrics:
+        enabled:
+          - dns:query
+          - drop
+          - tcp
+          - flow
+          - icmp
+          - http
     # prority 2, 1srt priority is opentelemetry ebpf
     bpf:
       tc:

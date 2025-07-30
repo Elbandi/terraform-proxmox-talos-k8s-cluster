@@ -30,7 +30,7 @@ resource "proxmox_virtual_environment_download_file" "this" {
 
   node_name    = split("_", each.key)[0]
   content_type = "iso"
-  datastore_id = "local"
+  datastore_id = var.proxmox.iso_datastore_id
 
   file_name               = "${var.cluster.name}-talos-${split("_", each.key)[1]}-${split("_", each.key)[2]}-${local.platform}-${local.arch}.img"
   url                     = "${local.factory_url}/image/${split("_", each.key)[1]}/${split("_", each.key)[2]}/${local.platform}-${local.arch}.raw.gz"

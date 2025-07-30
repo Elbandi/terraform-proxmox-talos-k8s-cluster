@@ -65,9 +65,12 @@ resource "proxmox_virtual_environment_vm" "vms" {
   initialization {
     datastore_id = each.value.datastore_id
 
-    dns {
-      domain  = var.cluster.dns_domain
-      servers = var.cluster.dns_servers
+    dynamic "dns" {
+      for_each = var.cluster.dns_domain != null || var.cluster.dns_servers != null ? [1] : []
+      content {
+        domain  = var.cluster.dns_domain
+        servers = var.cluster.dns_servers
+      }
     }
 
     ip_config {

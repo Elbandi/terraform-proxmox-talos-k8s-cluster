@@ -65,6 +65,9 @@ resource "talos_machine_configuration_apply" "controlplane" {
   config_patches = concat(
     [
       templatefile("${path.module}/config/control-plane.yaml.tmpl", {
+        talos_version                      = var.cluster.talos_version
+        kubernetes_version                 = var.cluster.kubernetes_version
+        hostname                           = each.key
         install_disk                       = each.value.install_disk
         allow_scheduling_on_control_planes = var.cluster.allow_scheduling_on_control_planes
         vip_ip                             = var.cluster.vip_ip
@@ -94,9 +97,12 @@ resource "talos_machine_configuration_apply" "worker" {
   config_patches = concat(
     [
       templatefile("${path.module}/config/worker.yaml.tmpl", {
-        install_disk   = each.value.install_disk
-        time_server    = each.value.time_server
-        kernel_modules = each.value.kernel_modules
+        talos_version      = var.cluster.talos_version
+        kubernetes_version = var.cluster.kubernetes_version
+        hostname           = each.key
+        install_disk       = each.value.install_disk
+        time_server        = each.value.time_server
+        kernel_modules     = each.value.kernel_modules
       }),
     ],
     # Add GPU patch if this worker node has a GPU

@@ -3,6 +3,10 @@ version: v1alpha1
 machine:
   install:
     disk: ${install_disk}
+%{ if !startswith(talos_version, "v1.12") ~}
+  network:
+    hostname: ${hostname}
+%{ endif ~}
   time:
     servers:
       - %{ if time_server != null && time_server != "" }${time_server}%{ else }pool.ntp.org%{ endif }
@@ -24,7 +28,10 @@ machine:
           address = "0.0.0.0:11234"
       path: /var/cri/conf.d/metrics.toml
       op: create
+%{ if startswith(talos_version, "v1.12") ~}
 ---
 apiVersion: v1alpha1
 kind: HostnameConfig
-auto: stable
+hostname: ${hostname}
+auto: off
+%{ endif ~}

@@ -3,6 +3,10 @@ version: v1alpha1
 machine:
   install:
     disk: ${install_disk}
+%{ if !startswith(talos_version, "v1.12") ~}
+  network:
+    hostname: ${hostname}
+%{ endif ~}
   time:
     servers:
       - %{ if time_server != null && time_server != "" }${time_server}%{ else }pool.ntp.org%{ endif }
@@ -59,14 +63,17 @@ cluster:
   - name: cilium-bootstrap
     contents: |
       ${indent(6, cilium_install)}
+%{ if startswith(talos_version, "v1.12") ~}
 ---
 apiVersion: v1alpha1
 kind: HostnameConfig
-auto: stable
+hostname: ${hostname}
+auto: off
 %{ if vip_ip != null ~}
 ---
 apiVersion: v1alpha1
 kind: Layer2VIPConfig
 name: ${vip_ip}
 link: ${vip_interface}
+%{ endif ~}
 %{ endif ~}

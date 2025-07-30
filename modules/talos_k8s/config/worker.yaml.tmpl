@@ -10,6 +10,11 @@ machine:
   kubelet:
     extraArgs:
       rotate-server-certificates: true
+  kernel:
+    modules:
+%{ for mod in kernel_modules ~}
+      - name: ${mod}
+%{ endfor ~}
   files:
     - content: |
         [metrics]

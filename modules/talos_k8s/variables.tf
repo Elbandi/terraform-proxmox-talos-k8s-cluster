@@ -10,10 +10,11 @@ variable "cluster" {
 variable "nodes" {
   description = "Configuration for worker nodes"
   type = map(object({
-    machine_type = string
-    ip           = string
-    install_disk = optional(string, "/dev/sda")
-    gpu          = optional(string)
-    time_server  = optional(string)
+    machine_type   = string
+    ip             = string
+    install_disk   = optional(string, "/dev/sda")
+    gpu            = optional(string)
+    time_server    = optional(string)
+    kernel_modules = optional(list(string), [])
   }))
 }

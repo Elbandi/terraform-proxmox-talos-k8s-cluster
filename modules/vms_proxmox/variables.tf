@@ -11,6 +11,7 @@ variable "proxmox" {
     random_vm_ids      = optional(string, false)
     random_vm_id_start = optional(number, 1000)
     random_vm_id_end   = optional(number, 2000)
+    iso_datastore_id   = optional(string, "local")
   })
   sensitive = true
 }

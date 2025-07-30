@@ -40,6 +40,7 @@ resource "talos_machine_configuration_apply" "controlplane" {
       hostname       = "${var.cluster.name}-${each.key}"
       cluster_vip    = var.cluster.endpoint
       install_disk   = each.value.install_disk
+      time_server    = each.value.time_server
       cilium_values  = file("${path.module}/kubernetes/cilium-values.yaml")
       cilium_install = file("${path.module}/kubernetes/cilium-install.yaml")
     }),
@@ -59,6 +60,7 @@ resource "talos_machine_configuration_apply" "worker" {
     templatefile("${path.module}/config/worker.yaml.tmpl", {
       hostname     = "${var.cluster.name}-${each.key}"
       install_disk = each.value.install_disk
+      time_server  = each.value.time_server
     }),
   ]
 }
@@ -75,6 +77,7 @@ resource "talos_machine_configuration_apply" "worker_gpu" {
     templatefile("${path.module}/config/worker.yaml.tmpl", {
       hostname     = "${var.cluster.name}-${each.key}"
       install_disk = each.value.install_disk
+      time_server  = each.value.time_server
     }),
     file("${path.module}/config/gpu-worker-patch.yaml"),
     file("${path.module}/config/nvidia-default-runtimeclass.yaml"),

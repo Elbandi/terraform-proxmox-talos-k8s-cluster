@@ -6,7 +6,7 @@ machine:
 # https://www.talos.dev/v1.7/talos-guides/configuration/time-sync/#additional-configuration
   time:
     servers:
-      - pool.ntp.org
+      - %{ if time_server != null && time_server != "" }${time_server}%{ else }pool.ntp.org%{ endif }
   kubelet:
     extraArgs:
       rotate-server-certificates: true

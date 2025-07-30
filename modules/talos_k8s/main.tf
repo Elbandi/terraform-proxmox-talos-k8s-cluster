@@ -37,7 +37,7 @@ resource "talos_machine_configuration_apply" "controlplane" {
   endpoint = each.value.ip
   config_patches = [
     templatefile("${path.module}/config/control-plane.yaml.tmpl", {
-      hostname       = "${var.cluster.name}-${each.key}"
+      hostname       = each.key
       cluster_vip    = var.cluster.endpoint
       install_disk   = each.value.install_disk
       time_server    = each.value.time_server
@@ -59,7 +59,7 @@ resource "talos_machine_configuration_apply" "worker" {
   node = each.value.ip
   config_patches = [
     templatefile("${path.module}/config/worker.yaml.tmpl", {
-      hostname       = "${var.cluster.name}-${each.key}"
+      hostname       = each.key
       install_disk   = each.value.install_disk
       time_server    = each.value.time_server
       kernel_modules = each.value.kernel_modules
@@ -77,7 +77,7 @@ resource "talos_machine_configuration_apply" "worker_gpu" {
   node = each.value.ip
   config_patches = [
     templatefile("${path.module}/config/worker.yaml.tmpl", {
-      hostname       = "${var.cluster.name}-${each.key}"
+      hostname       = each.key
       install_disk   = each.value.install_disk
       time_server    = each.value.time_server
       kernel_modules = each.value.kernel_modules

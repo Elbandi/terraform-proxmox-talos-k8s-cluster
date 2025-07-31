@@ -44,8 +44,10 @@ resource "talos_machine_configuration_apply" "controlplane" {
       kernel_modules = each.value.kernel_modules
       cilium_values  = file("${path.module}/kubernetes/cilium-values.yaml")
       cilium_install = file("${path.module}/kubernetes/cilium-install.yaml")
-      enable_lvm     = each.value.data_lvm
-      lvm_setup      = file("${path.module}/kubernetes/lvm-setup.yaml")
+      enable_lvm     = anytrue([for i, v in each.value.data_disks : v.type == "lvm"])
+      lvm_setup = templatefile("${path.module}/kubernetes/lvm-setup.yaml", {
+        data_disks = each.value.data_disks
+      })
     }),
     file("${path.module}/config/falco-patch.yaml"),
   ]

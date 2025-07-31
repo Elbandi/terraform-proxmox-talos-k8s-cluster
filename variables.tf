@@ -34,15 +34,20 @@ variable "cluster" {
 variable "vms" {
   description = "VMs configuration"
   type = map(object({
-    host_node        = string
-    vm_id            = optional(number)
-    machine_type     = string
-    datastore_id     = optional(string, "local-lvm")
-    ip               = optional(string)
-    cpu              = number
-    ram_dedicated    = number
-    os_disk_size     = optional(number, 10)
-    data_disk_size   = optional(number, 20)
+    host_node     = string
+    vm_id         = optional(number)
+    machine_type  = string
+    datastore_id  = optional(string, "local-lvm")
+    ip            = optional(string)
+    cpu           = number
+    ram_dedicated = number
+    os_disk_size  = optional(number, 10)
+    data_disks = optional(list(object({
+      size = number
+      type = optional(string)
+      dev  = optional(string)
+      name = optional(string)
+    })), [])
     install_disk     = optional(string, "/dev/sda")
     data_lvm         = optional(bool, false)
     disk_file_format = optional(string, "raw")

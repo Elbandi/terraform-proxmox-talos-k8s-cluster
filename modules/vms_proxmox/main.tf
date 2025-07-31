@@ -44,16 +44,19 @@ resource "proxmox_virtual_environment_vm" "vms" {
     file_id      = proxmox_virtual_environment_download_file.this["${each.value.host_node}_${each.value.gpu != null ? local.image_nvidia_id : local.image_id}"].id
   }
 
-  # data disk
-  disk {
-    datastore_id = each.value.datastore_id
-    interface    = "scsi1"
-    iothread     = true
-    cache        = "writethrough"
-    discard      = "on"
-    ssd          = true
-    file_format  = each.value.disk_file_format
-    size         = each.value.data_disk_size
+  # data disk - csak akkor adja hozzá, ha data_disk letezik
+  dynamic "disk" {
+    for_each = each.value.data_disks
+    content {
+      datastore_id = each.value.datastore_id
+      interface    = "scsi1"
+      iothread     = true
+      cache        = "writethrough"
+      discard      = "on"
+      ssd          = true
+      file_format  = each.value.disk_file_format
+      size         = disk.value.size
+    }
   }
 
   boot_order = ["scsi0"]

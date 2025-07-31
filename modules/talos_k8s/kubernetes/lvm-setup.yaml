@@ -1,8 +1,9 @@
+%{ for disk in data_disks }
 ---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: lvm-setup
+  name: lvm-setup-${disk.name}
   namespace: kube-system
 spec:
   selector:
@@ -30,10 +31,9 @@ spec:
         - -c
         - |
           while sleep 60; do
-            DEVICE=/dev/sdb
             echo ----------------------------------------
             date
-            chroot /hostfs/ pvdisplay -m "$DEVICE"
+            chroot /hostfs/ pvdisplay -m ${disk.dev}
           done
       initContainers:
       - image: alpine
@@ -49,12 +49,12 @@ spec:
         - |
           set -ex
             apk add --no-cache lvm2
-            if ! chroot /hostfs lvdisplay lvmpv/pool &>/dev/null ; then
-                DEVICE=/dev/sdb
-                echo "Creating lvmpv-pool on $DEVICE."
-                pvcreate --yes -ff "$DEVICE"
-                vgcreate --yes lvmpv "$DEVICE"
-                lvcreate --yes -dddd -n MetadataLV -L 64M lvmpv "$DEVICE":0-31
-                lvcreate --yes -n pool -l 100%FREE lvmpv "$DEVICE":32-
-                lvconvert --yes --type thin-pool --poolmetadata MetadataLV lvmpv/pool
+            if ! chroot /hostfs lvdisplay ${disk.name}/pool &>/dev/null ; then
+                echo "Creating ${disk.name}-pool on ${disk.dev}."
+                pvcreate --yes -ff ${disk.dev}
+                vgcreate --yes ${disk.name} ${disk.dev}
+                lvcreate --yes -n MetadataLV -L 64M ${disk.name} ${disk.dev}:0-31
+                lvcreate --yes -n pool -l 100%FREE ${disk.name} ${disk.dev}:32-
+                lvconvert --yes --type thin-pool --poolmetadata MetadataLV ${disk.name}/pool
             fi
+%{ endfor ~}

@@ -15,6 +15,9 @@ machine:
       rotate-server-certificates: true
   kernel:
     modules:
+%{ if enable_lvm ~}
+      - name: dm_thin_pool
+%{ endif ~}
 %{ for mod in kernel_modules ~}
       - name: ${mod}
 %{ endfor ~}
@@ -57,6 +60,11 @@ cluster:
     disabled: true
   # inline bootstrap manifests 
   inlineManifests:
+%{ if enable_lvm ~}
+  - name: lvm-setup
+    contents: |
+      ${indent(6, lvm_setup)}
+%{ endif ~}
   - name: cilium-values
     contents: |
       ${indent(6, cilium_values)}

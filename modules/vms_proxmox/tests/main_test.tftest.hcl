@@ -52,7 +52,7 @@ variables {
       cpu              = 2
       memory_dedicated = 4096
       system_disk_size = 10
-      user_disk_size   = 20
+      user_disk        = { size = 20 }
     }
   }
 }
@@ -109,7 +109,7 @@ run "vm_count_matches_input" {
         cpu              = 2
         memory_dedicated = 4096
         system_disk_size = 10
-        user_disk_size   = 20
+        user_disk        = { size = 20 }
       }
       "cp-1" = {
         host_node        = "pve1"
@@ -118,7 +118,7 @@ run "vm_count_matches_input" {
         cpu              = 2
         memory_dedicated = 4096
         system_disk_size = 10
-        user_disk_size   = 20
+        user_disk        = { size = 20 }
       }
       "worker-0" = {
         host_node        = "pve1"
@@ -127,7 +127,7 @@ run "vm_count_matches_input" {
         cpu              = 4
         memory_dedicated = 8192
         system_disk_size = 20
-        user_disk_size   = 50
+        user_disk        = { size = 50 }
       }
     }
   }

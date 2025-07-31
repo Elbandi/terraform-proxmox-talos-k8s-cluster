@@ -48,7 +48,12 @@ variable "vms" {
     cpu              = number
     memory_dedicated = number
     system_disk_size = number
-    user_disk_size   = number
+    user_disks = optional(list(object({
+      size = number
+      type = optional(string)
+      dev  = optional(string)
+      name = optional(string)
+    })), [])
     disk_file_format = optional(string, "raw")
     gpu              = optional(string)
   }))

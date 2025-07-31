@@ -32,6 +32,7 @@ variable "cluster" {
     allow_scheduling_on_control_planes = optional(bool, true)
     vip_ip                             = optional(string)
     vip_interface                      = optional(string, "eth0")
+    lvm_label_node                     = optional(bool, true)
   })
 }
 
@@ -52,7 +53,12 @@ variable "vms" {
     cpu              = number
     memory_dedicated = number
     system_disk_size = optional(number, 10)
-    user_disk_size   = optional(number, 20)
+    user_disks = optional(list(object({
+      size = number
+      type = optional(string)
+      dev  = optional(string)
+      name = optional(string)
+    })), [])
     install_disk     = optional(string, "/dev/sda")
     disk_file_format = optional(string, "raw")
     gpu              = optional(string)

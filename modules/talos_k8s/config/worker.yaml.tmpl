@@ -15,6 +15,9 @@ machine:
 %{ for mod in kernel_modules ~}
       - name: ${mod}
 %{ endfor ~}
+%{ for mod in kernel_modules ~}
+      - name: ${mod}
+%{ endfor ~}
   files:
     - content: |
         [metrics]

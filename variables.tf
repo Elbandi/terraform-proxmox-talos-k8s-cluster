@@ -44,6 +44,7 @@ variable "vms" {
     os_disk_size     = optional(number, 10)
     data_disk_size   = optional(number, 20)
     install_disk     = optional(string, "/dev/sda")
+    data_lvm         = optional(bool, false)
     disk_file_format = optional(string, "raw")
     gpu              = optional(string)
     time_server      = optional(string)

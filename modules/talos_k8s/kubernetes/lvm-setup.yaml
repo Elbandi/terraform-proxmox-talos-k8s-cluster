@@ -1,0 +1,60 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: lvm-setup
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: lvm
+  template:
+    metadata:
+      labels:
+        app: lvm
+    spec:
+      volumes:
+      - name: hostfs
+        hostPath:
+          path: /
+      containers:
+      - image: alpine
+        name: lvm-info
+        volumeMounts:
+        - name: hostfs
+          mountPath: /hostfs
+        securityContext:
+          privileged: true
+        command:
+        - sh
+        - -c
+        - |
+          while sleep 60; do
+            DEVICE=/dev/sdb
+            echo ----------------------------------------
+            date
+            chroot /hostfs/ pvdisplay -m "$DEVICE"
+          done
+      initContainers:
+      - image: alpine
+        name: lvm-setup
+        volumeMounts:
+        - name: hostfs
+          mountPath: /hostfs
+        securityContext:
+          privileged: true
+        command:
+        - sh
+        - -c
+        - |
+          set -ex
+            apk add --no-cache lvm2
+            if ! chroot /hostfs lvdisplay lvmpv/pool &>/dev/null ; then
+                DEVICE=/dev/sdb
+                echo "Creating lvmpv-pool on $DEVICE."
+                pvcreate --yes -ff "$DEVICE"
+                vgcreate --yes lvmpv "$DEVICE"
+                lvcreate --yes -dddd -n MetadataLV -L 64M lvmpv "$DEVICE":0-31
+                lvcreate --yes -n pool -l 100%FREE lvmpv "$DEVICE":32-
+                lvconvert --yes --type thin-pool --poolmetadata MetadataLV lvmpv/pool
+            fi

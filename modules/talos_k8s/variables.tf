@@ -13,6 +13,7 @@ variable "nodes" {
     machine_type   = string
     ip             = string
     install_disk   = optional(string, "/dev/sda")
+    data_lvm       = optional(bool, false)
     gpu            = optional(string)
     time_server    = optional(string)
     kernel_modules = optional(list(string), [])

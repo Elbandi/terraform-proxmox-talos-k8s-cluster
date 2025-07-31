@@ -58,3 +58,13 @@ module "gitops_k8s" {
 
   gitops = var.gitops
 }
+
+module "argocd_k8s" {
+  depends_on = [module.init_k8s]
+  source     = "./modules/argocd_k8s"
+  count      = (var.argocd == null) ? 0 : 1
+
+  argocd          = var.argocd
+  git_credentials = var.git_credentials
+  repo            = var.repo
+}

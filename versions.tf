@@ -9,6 +9,10 @@ terraform {
       source  = "fluxcd/flux"
       version = "~> 1.7"
     }
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 3.1"
+    }
     local = {
       source  = "hashicorp/local"
       version = "~> 2.6"

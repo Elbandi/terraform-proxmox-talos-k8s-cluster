@@ -218,6 +218,7 @@ The module is composed of four sub-modules executed in order:
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.8 |
 | <a name="requirement_flux"></a> [flux](#requirement\_flux) | ~> 1.7 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 3.1 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 3.0 |
 | <a name="requirement_local"></a> [local](#requirement\_local) | ~> 2.6 |
 
@@ -231,6 +232,7 @@ The module is composed of four sub-modules executed in order:
 
 | Name | Source | Version |
 |------|--------|---------|
+| <a name="module_argocd_k8s"></a> [argocd\_k8s](#module\_argocd\_k8s) | ./modules/argocd_k8s | n/a |
 | <a name="module_gitops_k8s"></a> [gitops\_k8s](#module\_gitops\_k8s) | ./modules/gitops_k8s | n/a |
 | <a name="module_init_k8s"></a> [init\_k8s](#module\_init\_k8s) | ./modules/init_k8s | n/a |
 | <a name="module_talos_k8s"></a> [talos\_k8s](#module\_talos\_k8s) | ./modules/talos_k8s | n/a |
@@ -250,11 +252,14 @@ The module is composed of four sub-modules executed in order:
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_additional_extensions"></a> [additional\_extensions](#input\_additional\_extensions) | Additional Talos system extensions to include in all images (added to base + GPU-specific extensions defined in modules/vms\_proxmox/schematics/) | `list(string)` | `[]` | no |
+| <a name="input_argocd"></a> [argocd](#input\_argocd) | ArgoCD configuration | <pre>object({<br/>    admin_password = string<br/>    namespace      = string<br/>    chart_version  = string<br/>  })</pre> | `null` | no |
 | <a name="input_certificate"></a> [certificate](#input\_certificate) | Certificate for k8s sealed-secrets | <pre>object({<br/>    cert = string<br/>    key  = string<br/>  })</pre> | `null` | no |
 | <a name="input_cluster"></a> [cluster](#input\_cluster) | Cluster configuration | <pre>object({<br/>    name                               = string<br/>    talos_version                      = optional(string, "v1.12.4")<br/>    kubernetes_version                 = optional(string)<br/>    network_dhcp                       = optional(bool, false)<br/>    gateway                            = optional(string)<br/>    dns_domain                         = optional(string)<br/>    dns_servers                        = optional(list(string))<br/>    cidr                               = optional(number)<br/>    vlan_id                            = optional(number, null)<br/>    network_device_bridge              = optional(string, "vmbr0")<br/>    endpoint                           = optional(string)<br/>    allow_scheduling_on_control_planes = optional(bool, true)<br/>    vip_ip                             = optional(string)<br/>    vip_interface                      = optional(string, "eth0")<br/>    lvm_label_node                     = optional(bool, true)<br/>  })</pre> | n/a | yes |
+| <a name="input_git_credentials"></a> [git\_credentials](#input\_git\_credentials) | Git repository credentials | <pre>object({<br/>    username = string<br/>    password = string<br/>  })</pre> | `null` | no |
 | <a name="input_gitops"></a> [gitops](#input\_gitops) | GitOps configuration | <pre>object({<br/>    repository   = string<br/>    token        = string<br/>    cluster_name = string<br/>  })</pre> | `null` | no |
 | <a name="input_pci"></a> [pci](#input\_pci) | Mapping PCI configuration | <pre>map(object({<br/>    name             = string<br/>    id               = string<br/>    iommu_group      = number<br/>    node             = string<br/>    path             = string<br/>    subsystem_id     = string<br/>    mediated_devices = optional(bool, false)<br/>  }))</pre> | `null` | no |
 | <a name="input_proxmox"></a> [proxmox](#input\_proxmox) | Proxmox configuration | <pre>object({<br/>    endpoint           = optional(string)<br/>    insecure           = optional(bool)<br/>    username           = optional(string)<br/>    password           = optional(string)<br/>    realm              = optional(string, "pam")<br/>    api_token          = optional(string)<br/>    ssh_agent          = optional(string, false)<br/>    random_vm_ids      = optional(string, false)<br/>    random_vm_id_start = optional(number, 1000)<br/>    random_vm_id_end   = optional(number, 2000)<br/>  })</pre> | n/a | yes |
+| <a name="input_repo"></a> [repo](#input\_repo) | Git repo and path to the ArgoCD Applications | <pre>object({<br/>    name          = string<br/>    repo_url      = string<br/>    branch        = optional(string, "main")<br/>    manifest_path = string<br/>    project_name  = optional(string, "default")<br/>    recurse       = optional(bool, true)<br/>  })</pre> | `null` | no |
 | <a name="input_vms"></a> [vms](#input\_vms) | VMs configuration | <pre>map(object({<br/>    host_node        = string<br/>    vm_id            = optional(number)<br/>    machine_type     = string<br/>    datastore_id     = optional(string, "local-lvm")<br/>    ip               = optional(string)<br/>    cpu              = number<br/>    memory_dedicated = number<br/>    system_disk_size = optional(number, 10)<br/>    user_disks = optional(list(object({<br/>      size = number<br/>      type = optional(string)<br/>      dev  = optional(string)<br/>      name = optional(string)<br/>    })), [])<br/>    install_disk     = optional(string, "/dev/sda")<br/>    disk_file_format = optional(string, "raw")<br/>    gpu              = optional(string)<br/>    time_server      = optional(string)<br/>    kernel_modules   = optional(list(string), [])<br/>  }))</pre> | n/a | yes |
 
 ## Outputs

@@ -99,3 +99,37 @@ variable "certificate" {
   })
   default = null
 }
+
+variable "argocd" {
+  description = "ArgoCD configuration"
+  type = object({
+    admin_password = string
+    namespace      = string
+    chart_version  = string
+  })
+  default = null
+}
+
+variable "repo" {
+  description = "Git repo and path to the ArgoCD Applications"
+
+  type = object({
+    name          = string
+    repo_url      = string
+    branch        = optional(string, "main")
+    manifest_path = string
+    project_name  = optional(string, "default")
+    recurse       = optional(bool, true)
+  })
+  default = null
+}
+
+variable "git_credentials" {
+  type = object({
+    username = string
+    password = string
+  })
+  description = "Git repository credentials"
+  default     = null
+  sensitive   = true
+}

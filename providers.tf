@@ -24,3 +24,12 @@ provider "flux" {
     }
   }
 }
+
+provider "helm" {
+  kubernetes = {
+    host                   = local.kubernetes.host
+    client_certificate     = local.kubernetes.client_certificate
+    client_key             = local.kubernetes.client_key
+    cluster_ca_certificate = local.kubernetes.cluster_ca_certificate
+  }
+}

@@ -7,31 +7,9 @@ resource "helm_release" "argocd" {
   create_namespace = true
   version          = var.argocd.chart_version
 
-  values = [yamlencode({
-    # global = {
-    #   domain = var.hostname
-    # }
-    configs = {
-      params = {
-        "server.insecure"        = true
-        "application.namespaces" = "*"
-      }
-      secret = {
-        argocdServerAdminPassword = bcrypt(var.argocd.admin_password)
-      }
-      extraArgs = [
-        "--insecure"
-      ]
-    }
-    dex = {
-      enabled = false
-    }
-    notifications = {
-      enabled = true
-    }
-    applicationSet = {
-      enabled = true
-    }
+  values = [templatefile("${path.module}/config/argocd-helm-values.yaml.tmpl", {
+    argocd = var.argocd,
+    repo   = var.repo,
   })]
   timeout = 180
   wait    = true
@@ -50,11 +28,12 @@ resource "kubernetes_secret" "git_repository" {
   }
 
   data = {
-    type     = "git"
-    name     = var.repo.name
-    url      = var.repo.repo_url
-    username = var.git_credentials.username
-    password = var.git_credentials.password
+    type          = "git"
+    name          = var.repo.name
+    url           = var.repo.repo_url
+    username      = var.git_credentials.username
+    password      = var.git_credentials.password
+    sshPrivateKey = var.git_credentials.private_key
     #    project  = var.git_credentials.project # TODO: miez?
   }
 

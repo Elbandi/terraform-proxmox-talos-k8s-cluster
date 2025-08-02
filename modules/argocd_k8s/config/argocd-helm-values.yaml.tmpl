@@ -1,0 +1,50 @@
+---
+# global:
+#   domain: 
+fullnameOverride: argocd-helm
+
+configs:
+  params:
+    server.insecure: "true"
+    application.namespaces: "*"
+  secret:
+    argocdServerAdminPassword: "${argocd.admin_password}"
+
+  extraArgs:
+    - --insecure
+
+  ssh:
+%{ if repo.ssh_known_hosts != null ~}
+    extraHosts: |
+      ${ join("\n      ", repo.ssh_known_hosts) }
+%{ endif ~}
+  cm:
+%{ if argocd.oidc_config != null ~}
+    oidc.config: |
+      name: ${argocd.oidc_config.name}
+      issuer: ${argocd.oidc_config.issuer}
+      clientID: ${argocd.oidc_config.client_id}
+      clientSecret: ${argocd.oidc_config.client_secret}
+      requestedScopes: [ ${join(", ", [for s in argocd.oidc_config.requested_scopes: "\"${s}\""])} ]
+%{ endif ~}
+%{ if argocd.custom_rbac != null ~}
+  rbac:
+    scopes: %{ if argocd.custom_rbac.scopes != null }'[${ join(", ", argocd.custom_rbac.scopes)}]'%{ else }[groups]%{ endif }
+%{ if argocd.custom_rbac.policy != null ~}
+    policy.csv: |
+      ${ join("\n      ", argocd.custom_rbac.policy) }
+%{ endif ~}
+%{ endif }
+
+controller:
+  metrics:
+    enabled: true
+
+dex:
+  enabled: false
+
+notifications:
+  enabled: true
+
+applicationSet:
+  enabled: true

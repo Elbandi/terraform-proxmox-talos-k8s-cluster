@@ -1,9 +1,8 @@
-%{ for disk in data_disks }
 ---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: lvm-setup-${disk.name}
+  name: lvm-setup
   namespace: kube-system
 spec:
   selector:
@@ -33,7 +32,9 @@ spec:
           while sleep 60; do
             echo ----------------------------------------
             date
-            chroot /hostfs/ pvdisplay -m ${disk.dev}
+            for DEVICE in $(cd /hostfs;ls dev/disk/by-id/scsi-*lvm* 2>/dev/null); do
+              chroot /hostfs/ pvdisplay -m /$DEVICE
+            done
           done
       initContainers:
       - image: alpine
@@ -49,12 +50,16 @@ spec:
         - |
           set -ex
             apk add --no-cache lvm2
-            if ! chroot /hostfs lvdisplay ${disk.name}/pool &>/dev/null ; then
-                echo "Creating ${disk.name}-pool on ${disk.dev}."
-                pvcreate --yes -ff ${disk.dev}
-                vgcreate --yes ${disk.name} ${disk.dev}
-                lvcreate --yes -n MetadataLV -L 64M ${disk.name} ${disk.dev}:0-31
-                lvcreate --yes -n pool -l 100%FREE ${disk.name} ${disk.dev}:32-
-                lvconvert --yes --type thin-pool --poolmetadata MetadataLV ${disk.name}/pool
-            fi
-%{ endfor ~}
+            for DEVICE in $(cd /hostfs;ls dev/disk/by-id/scsi-*lvm* 2>/dev/null); do
+              NAME=$(expr "$DEVICE" : '.*lvm-\([^\-]\+\)')
+              DEVICE=$(realpath /hostfs/$DEVICE)
+              if ! chroot /hostfs lvdisplay $NAME/pool &>/dev/null ; then
+                echo "Creating $NAME-pool on ${DEVICE##/hostfs}."
+                pvcreate --yes -ff ${DEVICE##/hostfs}
+                vgcreate --yes $NAME ${DEVICE##/hostfs}
+                lvcreate --yes -n MetadataLV -L 64M $NAME ${DEVICE##/hostfs}:0-31
+                lvcreate --yes -n pool -l 100%FREE $NAME ${DEVICE##/hostfs}:32-
+                lvconvert --yes --type thin-pool --poolmetadata MetadataLV $NAME/pool
+              fi
+              chroot /hostfs/ pvdisplay -m ${DEVICE##/hostfs}
+            done

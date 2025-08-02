@@ -57,6 +57,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
       ssd          = true
       file_format  = each.value.disk_file_format
       size         = disk.value.size
+      serial       = disk.value.type != null ? "${disk.value.type}-${disk.value.name}-${disk.key + 1}" : null
     }
   }
 

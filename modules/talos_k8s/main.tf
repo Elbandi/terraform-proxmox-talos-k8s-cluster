@@ -44,10 +44,8 @@ resource "talos_machine_configuration_apply" "controlplane" {
       kernel_modules = each.value.kernel_modules
       cilium_values  = file("${path.module}/kubernetes/cilium-values.yaml")
       cilium_install = file("${path.module}/kubernetes/cilium-install.yaml")
-      enable_lvm     = anytrue([for i, v in each.value.data_disks : v.type == "lvm"])
-      lvm_setup = templatefile("${path.module}/kubernetes/lvm-setup.yaml", {
-        data_disks = each.value.data_disks
-      })
+      enable_lvm     = anytrue(flatten([for i, n in var.nodes : [for j, d in n.data_disks : d.type == "lvm"]]))
+      lvm_setup      = file("${path.module}/kubernetes/lvm-setup.yaml")
     }),
     file("${path.module}/config/falco-patch.yaml"),
   ]
@@ -67,6 +65,7 @@ resource "talos_machine_configuration_apply" "worker" {
       install_disk   = each.value.install_disk
       time_server    = each.value.time_server
       kernel_modules = each.value.kernel_modules
+      enable_lvm     = anytrue([for i, d in each.value.data_disks : d.type == "lvm"])
     }),
   ]
 }
@@ -85,6 +84,7 @@ resource "talos_machine_configuration_apply" "worker_gpu" {
       install_disk   = each.value.install_disk
       time_server    = each.value.time_server
       kernel_modules = each.value.kernel_modules
+      enable_lvm     = anytrue([for i, d in each.value.data_disks : d.type == "lvm"])
     }),
     file("${path.module}/config/gpu-worker-patch.yaml"),
     file("${path.module}/config/nvidia-default-runtimeclass.yaml"),

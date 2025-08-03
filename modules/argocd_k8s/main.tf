@@ -40,60 +40,57 @@ resource "kubernetes_secret" "git_repository" {
   type = "Opaque"
 }
 
-# check for argocd crds
-data "kubernetes_resources" "applications_argoproj_io" {
-  api_version    = "apiextensions.k8s.io/v1"
-  kind           = "CustomResourceDefinition"
-  field_selector = "metadata.name==applications.argoproj.io"
-}
+resource "helm_release" "argocd-app" {
+  name             = "argocd-app"
+  chart            = "argocd-apps"
+  repository       = "https://argoproj.github.io/argo-helm"
+  namespace        = var.argocd.namespace
+  create_namespace = true
+  version          = "2.0.2"
 
-resource "kubernetes_manifest" "app_of_apps_manifest" {
-  depends_on = [helm_release.argocd, kubernetes_secret.git_repository]
-  count      = length(data.kubernetes_resources.applications_argoproj_io.objects)
-  manifest = {
-    apiVersion = "argoproj.io/v1alpha1"
-    kind       = "Application"
-    metadata = {
-      finalizers = [
-        "resources-finalizer.argocd.argoproj.io",
-      ]
-      name      = var.repo.name
-      namespace = var.argocd.namespace
-    }
-    spec = {
-      destination = {
+  values = [yamlencode({
+    applications = {
+      (var.repo.name) = {
         namespace = var.argocd.namespace
-        server    = "https://kubernetes.default.svc"
-      }
-      project = var.repo.project_name
-      source = {
-        directory = {
-          recurse = var.repo.recurse
+        finalizers = [
+          "resources-finalizer.argocd.argoproj.io"
+        ],
+        destination = {
+          namespace = var.argocd.namespace
+          server    = "https://kubernetes.default.svc"
         }
-        path           = var.repo.manifest_path
-        repoURL        = var.repo.repo_url
-        targetRevision = var.repo.branch
-      }
-      syncPolicy = {
-        automated = {
-          allowEmpty = false
-          prune      = true
-          selfHeal   = true
-        }
-        retry = {
-          backoff = {
-            duration    = "5s"
-            factor      = 2
-            maxDuration = "3m"
+        project = var.repo.project_name
+        source = {
+          directory = {
+            recurse = var.repo.recurse
           }
-          limit = 5
+          path           = var.repo.manifest_path
+          repoURL        = var.repo.repo_url
+          targetRevision = var.repo.branch
         }
-        syncOptions = [
-          "CreateNamespace=true",
-          "PrunePropagationPolicy=foreground",
-          "PruneLast=true",
-        ]
+        syncPolicy = {
+          automated = {
+            prune    = true
+            selfHeal = true
+          }
+          retry = {
+            backoff = {
+              duration    = "5s"
+              factor      = 2
+              maxDuration = "3m"
+            }
+            limit = 5
+          }
+          syncOptions = [
+            "CreateNamespace=true",
+            "PrunePropagationPolicy=foreground",
+            "PruneLast=true",
+          ]
+        }
       }
     }
-  }
+  })]
+  timeout    = 180
+  wait       = true
+  depends_on = [helm_release.argocd, kubernetes_secret.git_repository]
 }

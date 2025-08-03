@@ -18,7 +18,9 @@ configs:
     extraHosts: |
       ${ join("\n      ", repo.ssh_known_hosts) }
 %{ endif ~}
+%{ if argocd.oidc_config != null || argocd.custom_rbac != null ~}
   cm:
+%{ endif ~}
 %{ if argocd.oidc_config != null ~}
     oidc.config: |
       name: ${argocd.oidc_config.name}

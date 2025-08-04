@@ -1,9 +1,10 @@
 variable "cluster" {
   description = "Cluster configuration"
   type = object({
-    name         = string
-    endpoint     = string
-    network_dhcp = optional(bool, false)
+    name           = string
+    endpoint       = string
+    network_dhcp   = optional(bool, false)
+    lvm_label_node = optional(bool, true)
   })
 }
 

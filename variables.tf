@@ -28,6 +28,7 @@ variable "cluster" {
     vlan_id               = optional(number, null)
     network_device_bridge = optional(string, "vmbr0")
     endpoint              = optional(string)
+    lvm_label_node        = optional(bool, true)
   })
 }
 

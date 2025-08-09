@@ -1,11 +1,3 @@
-variable "schematic_id" {
-  type = string
-}
-
-variable "schematic_nvidia_id" {
-  type = string
-}
-
 variable "proxmox" {
   description = "Proxmox configuration"
   type = object({
@@ -27,8 +19,6 @@ variable "proxmox" {
 variable "cluster" {
   description = "Cluster configuration"
   type = object({
-    name                  = string
-    talos_version         = string
     network_dhcp          = optional(bool, false)
     gateway               = string
     dns_domain            = optional(string)
@@ -36,6 +26,8 @@ variable "cluster" {
     cidr                  = number
     vlan_id               = optional(number, null)
     network_device_bridge = optional(string, "vmbr0")
+    name                  = string
+    talos_version         = optional(string, "v1.10.3")
   })
 }
 

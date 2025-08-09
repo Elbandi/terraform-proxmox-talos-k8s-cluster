@@ -176,6 +176,7 @@ flux-system	flux-system	main@sha1:5902d505	False    	True 	Applied revision: mai
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.17.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >=2.38.0 |
 | <a name="requirement_local"></a> [local](#requirement\_local) | >=2.5.3 |
+| <a name="requirement_proxmox"></a> [proxmox](#requirement\_proxmox) | >=0.78.1 |
 
 ## Providers
 
@@ -189,6 +190,7 @@ flux-system	flux-system	main@sha1:5902d505	False    	True 	Applied revision: mai
 |------|--------|---------|
 | <a name="module_argocd_k8s"></a> [argocd\_k8s](#module\_argocd\_k8s) | ./modules/argocd_k8s | n/a |
 | <a name="module_gitops_k8s"></a> [gitops\_k8s](#module\_gitops\_k8s) | ./modules/gitops_k8s | n/a |
+| <a name="module_img_proxmox"></a> [img\_proxmox](#module\_img\_proxmox) | ./modules/img_proxmox | n/a |
 | <a name="module_init_k8s"></a> [init\_k8s](#module\_init\_k8s) | ./modules/init_k8s | n/a |
 | <a name="module_talos_k8s"></a> [talos\_k8s](#module\_talos\_k8s) | ./modules/talos_k8s | n/a |
 | <a name="module_vms_proxmox"></a> [vms\_proxmox](#module\_vms\_proxmox) | ./modules/vms_proxmox | n/a |
@@ -209,11 +211,15 @@ flux-system	flux-system	main@sha1:5902d505	False    	True 	Applied revision: mai
 | <a name="input_argocd"></a> [argocd](#input\_argocd) | ArgoCD configuration | <pre>object({<br/>    admin_password = string<br/>    namespace      = string<br/>    chart_version  = string<br/>    oidc_config = optional(object({<br/>      name             = string<br/>      issuer           = string<br/>      client_id        = string<br/>      client_secret    = string<br/>      requested_scopes = list(string)<br/>    }))<br/>    custom_rbac = optional(object({<br/>      scopes = list(string)<br/>      policy = list(string)<br/>    }))<br/>  })</pre> | `null` | no |
 | <a name="input_certificate"></a> [certificate](#input\_certificate) | Certificate for k8s sealed-secrets | <pre>object({<br/>    cert = string<br/>    key  = string<br/>  })</pre> | `null` | no |
 | <a name="input_cluster"></a> [cluster](#input\_cluster) | Cluster configuration | <pre>object({<br/>    name                  = string<br/>    talos_version         = optional(string, "v1.11.3")<br/>    network_dhcp          = optional(bool, false)<br/>    gateway               = optional(string)<br/>    dns_domain            = optional(string)<br/>    dns_servers           = optional(list(string))<br/>    cidr                  = optional(number)<br/>    vlan_id               = optional(number, null)<br/>    network_device_bridge = optional(string, "vmbr0")<br/>    endpoint              = optional(string)<br/>    lvm_label_node        = optional(bool, true)<br/>  })</pre> | n/a | yes |
+| <a name="input_deploy_stage"></a> [deploy\_stage](#input\_deploy\_stage) | Run deploy stage | `bool` | `false` | no |
 | <a name="input_git_credentials"></a> [git\_credentials](#input\_git\_credentials) | Git repository credentials | <pre>object({<br/>    username    = string<br/>    password    = optional(string)<br/>    private_key = optional(string)<br/>  })</pre> | `null` | no |
 | <a name="input_gitops"></a> [gitops](#input\_gitops) | GitOps configuration | <pre>object({<br/>    repository   = string<br/>    token        = string<br/>    cluster_name = string<br/>  })</pre> | `null` | no |
 | <a name="input_pci"></a> [pci](#input\_pci) | Mapping PCI configuration | <pre>map(object({<br/>    name         = string<br/>    id           = string<br/>    iommu_group  = number<br/>    node         = string<br/>    path         = string<br/>    subsystem_id = string<br/>  }))</pre> | `null` | no |
+| <a name="input_prepare_stage"></a> [prepare\_stage](#input\_prepare\_stage) | Run prepare stage | `bool` | `false` | no |
 | <a name="input_proxmox"></a> [proxmox](#input\_proxmox) | Proxmox configuration | <pre>object({<br/>    endpoint           = optional(string)<br/>    insecure           = optional(bool)<br/>    username           = optional(string)<br/>    password           = optional(string)<br/>    realm              = optional(string, "pam")<br/>    api_token          = optional(string)<br/>    ssh_agent          = optional(string, false)<br/>    random_vm_ids      = optional(string, false)<br/>    random_vm_id_start = optional(number, 1000)<br/>    random_vm_id_end   = optional(number, 2000)<br/>  })</pre> | n/a | yes |
 | <a name="input_repo"></a> [repo](#input\_repo) | Git repo and path to the ArgoCD Applications | <pre>object({<br/>    name            = string<br/>    repo_url        = string<br/>    branch          = optional(string, "main")<br/>    manifest_path   = string<br/>    project_name    = optional(string, "default")<br/>    recurse         = optional(bool, true)<br/>    ssh_known_hosts = optional(list(string))<br/>  })</pre> | `null` | no |
+| <a name="input_schematic_id"></a> [schematic\_id](#input\_schematic\_id) | n/a | `string` | `""` | no |
+| <a name="input_schematic_nvidia_id"></a> [schematic\_nvidia\_id](#input\_schematic\_nvidia\_id) | n/a | `string` | `""` | no |
 | <a name="input_vms"></a> [vms](#input\_vms) | VMs configuration | <pre>map(object({<br/>    host_node     = string<br/>    vm_id         = optional(number)<br/>    machine_type  = string<br/>    datastore_id  = optional(string, "local-lvm")<br/>    ip            = optional(string)<br/>    cpu           = number<br/>    ram_dedicated = number<br/>    os_disk_size  = optional(number, 10)<br/>    data_disks = optional(list(object({<br/>      size = number<br/>      type = optional(string)<br/>      dev  = optional(string)<br/>      name = optional(string)<br/>    })), [])<br/>    install_disk     = optional(string, "/dev/sda")<br/>    data_lvm         = optional(bool, false)<br/>    disk_file_format = optional(string, "raw")<br/>    gpu              = optional(string)<br/>    time_server      = optional(string)<br/>    kernel_modules   = optional(list(string), [])<br/>  }))</pre> | n/a | yes |
 
 ## Outputs
@@ -224,6 +230,8 @@ flux-system	flux-system	main@sha1:5902d505	False    	True 	Applied revision: mai
 | <a name="output_config_ipv4_addresses"></a> [config\_ipv4\_addresses](#output\_config\_ipv4\_addresses) | Retrieves VM names with IPv4 address for a k8s Talos cluster |
 | <a name="output_kube_config"></a> [kube\_config](#output\_kube\_config) | Retrieves the kubeconfig for a k8s Talos cluster |
 | <a name="output_qemu_ipv4_addresses"></a> [qemu\_ipv4\_addresses](#output\_qemu\_ipv4\_addresses) | Retrieves VM names with IPv4 address for a k8s Talos cluster |
+| <a name="output_schematic_id"></a> [schematic\_id](#output\_schematic\_id) | n/a |
+| <a name="output_schematic_nvidia_id"></a> [schematic\_nvidia\_id](#output\_schematic\_nvidia\_id) | n/a |
 | <a name="output_talos_config"></a> [talos\_config](#output\_talos\_config) | Retrieves the talosconfig for a k8s Talos cluster |
 | <a name="output_vm_ipv4_address_vms"></a> [vm\_ipv4\_address\_vms](#output\_vm\_ipv4\_address\_vms) | Retrieves IPv4 address for a k8s Talos cluster |
 <!-- END_TF_DOCS -->

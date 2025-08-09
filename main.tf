@@ -3,21 +3,8 @@ module "img_proxmox" {
   count  = var.prepare_stage ? 1 : 0
 
   proxmox = var.proxmox
-
-  cluster = {
-    name                  = var.cluster.name
-    gateway               = var.cluster.gateway
-    dns_domain            = var.cluster.dns_domain
-    dns_servers           = var.cluster.dns_servers
-    cidr                  = var.cluster.cidr
-    vlan_id               = var.cluster.vlan_id
-    talos_version         = var.cluster.talos_version
-    network_dhcp          = var.cluster.network_dhcp
-    network_device_bridge = var.cluster.network_device_bridge
-  }
-
-  vms = var.vms
-  pci = var.pci
+  cluster = var.cluster
+  vms     = var.vms
 }
 
 module "vms_proxmox" {
@@ -28,21 +15,9 @@ module "vms_proxmox" {
   schematic_nvidia_id = var.schematic_nvidia_id
 
   proxmox = var.proxmox
-
-  cluster = {
-    name                  = var.cluster.name
-    gateway               = var.cluster.gateway
-    dns_domain            = var.cluster.dns_domain
-    dns_servers           = var.cluster.dns_servers
-    cidr                  = var.cluster.cidr
-    vlan_id               = var.cluster.vlan_id
-    talos_version         = var.cluster.talos_version
-    network_dhcp          = var.cluster.network_dhcp
-    network_device_bridge = var.cluster.network_device_bridge
-  }
-
-  vms = var.vms
-  pci = var.pci
+  cluster = var.cluster
+  vms     = var.vms
+  pci     = var.pci
 }
 
 module "talos_k8s" {

@@ -1,3 +1,11 @@
+variable "schematic_id" {
+  type = string
+}
+
+variable "schematic_nvidia_id" {
+  type = string
+}
+
 variable "proxmox" {
   description = "Proxmox configuration"
   type = object({
@@ -19,6 +27,8 @@ variable "proxmox" {
 variable "cluster" {
   description = "Cluster configuration"
   type = object({
+    name                  = string
+    talos_version         = string
     network_dhcp          = optional(bool, false)
     gateway               = string
     dns_domain            = optional(string, null)
@@ -26,15 +36,7 @@ variable "cluster" {
     cidr                  = number
     vlan_id               = optional(number, null)
     network_device_bridge = optional(string, "vmbr0")
-    name                  = string
-    talos_version         = string
   })
-}
-
-variable "additional_extensions" {
-  description = "Additional Talos system extensions to include in all images (added to base + GPU-specific extensions)"
-  type        = list(string)
-  default     = []
 }
 
 variable "vms" {

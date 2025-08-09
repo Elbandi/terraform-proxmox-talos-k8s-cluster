@@ -1,3 +1,25 @@
+variable "prepare_stage" {
+  type        = bool
+  default     = false
+  description = "Run prepare stage"
+}
+
+variable "deploy_stage" {
+  type        = bool
+  default     = false
+  description = "Run deploy stage"
+}
+
+variable "schematic_id" {
+  type    = string
+  default = ""
+}
+
+variable "schematic_nvidia_id" {
+  type    = string
+  default = ""
+}
+
 variable "proxmox" {
   description = "Proxmox configuration"
   type = object({

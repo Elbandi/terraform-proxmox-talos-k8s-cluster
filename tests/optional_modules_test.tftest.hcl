@@ -115,6 +115,10 @@ variables {
 run "optional_modules_skipped_when_null" {
   command = plan
 
+  variables {
+    deploy_stage = true
+  }
+
   assert {
     condition     = length(module.gitops_k8s) == 0
     error_message = "gitops_k8s module should not be instantiated when gitops is null"
@@ -131,6 +135,7 @@ run "gitops_module_created_when_configured" {
   command = plan
 
   variables {
+    deploy_stage = true
     gitops = {
       repository   = "https://github.com/test/gitops.git"
       token        = "test-token"
@@ -155,7 +160,8 @@ run "init_k8s_created_when_certificate_provided" {
   command = plan
 
   variables {
-    gitops = null
+    deploy_stage = true
+    gitops       = null
     certificate = {
       cert = "test-cert-content"
       key  = "test-key-content"

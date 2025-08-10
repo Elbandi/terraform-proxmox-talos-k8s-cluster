@@ -1,5 +1,5 @@
 output "schematic_ids" {
-  value = local.prepare_stage ? module.img_proxmox[0].schematic_ids : null
+  value = local.prepare_stage ? module.img_vmware[0].schematic_ids : null
 }
 
 output "vm_ipv4_address_vms" {

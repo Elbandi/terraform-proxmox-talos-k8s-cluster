@@ -1,3 +1,11 @@
+variable "schematic_id" {
+  type = string
+}
+
+variable "schematic_nvidia_id" {
+  type = string
+}
+
 variable "vmware" {
   description = "VmWare configuration"
   type = object({

@@ -190,6 +190,7 @@ flux-system	flux-system	main@sha1:5902d505	False    	True 	Applied revision: mai
 |------|--------|---------|
 | <a name="module_argocd_k8s"></a> [argocd\_k8s](#module\_argocd\_k8s) | ./modules/argocd_k8s | n/a |
 | <a name="module_gitops_k8s"></a> [gitops\_k8s](#module\_gitops\_k8s) | ./modules/gitops_k8s | n/a |
+| <a name="module_img_vmware"></a> [img\_vmware](#module\_img\_vmware) | ./modules/img_vmware | n/a |
 | <a name="module_init_k8s"></a> [init\_k8s](#module\_init\_k8s) | ./modules/init_k8s | n/a |
 | <a name="module_talos_k8s"></a> [talos\_k8s](#module\_talos\_k8s) | ./modules/talos_k8s | n/a |
 | <a name="module_vms_vmware"></a> [vms\_vmware](#module\_vms\_vmware) | ./modules/vms_vmware | n/a |

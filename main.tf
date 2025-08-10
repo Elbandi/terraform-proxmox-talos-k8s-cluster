@@ -3,6 +3,15 @@ locals {
   deploy_stage  = terraform.workspace == "deploy"
 }
 
+module "img_vmware" {
+  source = "./modules/img_vmware"
+  count  = local.prepare_stage ? 1 : 0
+
+  vmware  = var.vmware
+  cluster = var.cluster
+  vms     = var.vms
+}
+
 module "vms_vmware" {
   source = "./modules/vms_vmware"
   count  = local.deploy_stage ? 1 : 0

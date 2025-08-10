@@ -25,7 +25,7 @@ data "vsphere_host" "host" {
 }
 
 resource "vsphere_virtual_machine" "vms" {
-  depends_on       = [vsphere_content_library_item.this]
+  depends_on       = [data.vsphere_content_library_item.this]
   for_each         = var.vms
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
 
@@ -83,7 +83,7 @@ resource "vsphere_virtual_machine" "vms" {
   datastore_id = data.vsphere_datastore.datastore[each.value.datastore_id].id
 
   clone {
-    template_uuid = vsphere_content_library_item.this["${each.value.gpu != null ? local.image_nvidia_id : local.image_id}"].id
+    template_uuid = data.vsphere_content_library_item.this["${each.value.gpu != null ? local.image_nvidia_id : local.image_id}"].id
     #   customize {
     #     linux_options {
     #       host_name = "${var.cluster.name}-${each.key}"

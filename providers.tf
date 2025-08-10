@@ -1,9 +1,9 @@
 locals {
   kubernetes = {
-    host                   = var.deploy_stage ? module.talos_k8s[0].kube_config.kubernetes_client_configuration.host : ""
-    client_certificate     = var.deploy_stage ? base64decode(module.talos_k8s[0].kube_config.kubernetes_client_configuration.client_certificate) : ""
-    client_key             = var.deploy_stage ? base64decode(module.talos_k8s[0].kube_config.kubernetes_client_configuration.client_key) : ""
-    cluster_ca_certificate = var.deploy_stage ? base64decode(module.talos_k8s[0].kube_config.kubernetes_client_configuration.ca_certificate) : ""
+    host                   = local.deploy_stage ? module.talos_k8s[0].kube_config.kubernetes_client_configuration.host : ""
+    client_certificate     = local.deploy_stage ? base64decode(module.talos_k8s[0].kube_config.kubernetes_client_configuration.client_certificate) : ""
+    client_key             = local.deploy_stage ? base64decode(module.talos_k8s[0].kube_config.kubernetes_client_configuration.client_key) : ""
+    cluster_ca_certificate = local.deploy_stage ? base64decode(module.talos_k8s[0].kube_config.kubernetes_client_configuration.ca_certificate) : ""
   }
 }
 

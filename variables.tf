@@ -13,6 +13,23 @@ variable "proxmox" {
     random_vm_id_end   = optional(number, 2000)
     pool               = optional(string)
   })
+  default   = null
+  sensitive = true
+}
+
+variable "vmware" {
+  description = "VmWare configuration"
+  type = object({
+    endpoint        = optional(string)
+    insecure        = optional(bool)
+    username        = optional(string)
+    password        = optional(string)
+    datacenter      = optional(string)
+    content_library = optional(string, "vHosting-ISO")
+    cluster         = optional(string)
+    folder          = optional(string)
+  })
+  default   = null
   sensitive = true
 }
 

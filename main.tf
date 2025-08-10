@@ -3,27 +3,18 @@ locals {
   deploy_stage  = terraform.workspace == "deploy"
 }
 
-module "img_proxmox" {
-  source = "./modules/img_proxmox"
-  count  = local.prepare_stage ? 1 : 0
-
-  proxmox = var.proxmox
-  cluster = var.cluster
-  vms     = var.vms
-}
-
-module "vms_proxmox" {
-  source = "./modules/vms_proxmox"
+module "vms_vmware" {
+  source = "./modules/vms_vmware"
   count  = local.deploy_stage ? 1 : 0
 
-  proxmox = var.proxmox
+  vmware  = var.vmware
   cluster = var.cluster
   vms     = var.vms
   pci     = var.pci
 }
 
 module "talos_k8s" {
-  depends_on = [module.vms_proxmox]
+  depends_on = [module.vms_vmware]
   source     = "./modules/talos_k8s"
   count      = local.deploy_stage ? 1 : 0
 
@@ -42,7 +33,7 @@ module "talos_k8s" {
   }
 
   nodes = { for k, vm in var.vms : k => merge(vm, {
-    ip = lookup(module.vms_proxmox[0].qemu_ipv4_addresses, k, vm.ip)
+    ip = lookup(module.vms_vmware[0].qemu_ipv4_addresses, k, vm.ip)
   }) }
 }
 

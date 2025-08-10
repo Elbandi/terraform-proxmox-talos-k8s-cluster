@@ -176,7 +176,7 @@ flux-system	flux-system	main@sha1:5902d505	False    	True 	Applied revision: mai
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 3.1 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >=2.38.0 |
 | <a name="requirement_local"></a> [local](#requirement\_local) | >=2.5.3 |
-| <a name="requirement_proxmox"></a> [proxmox](#requirement\_proxmox) | >=0.78.1 |
+| <a name="requirement_vsphere"></a> [vsphere](#requirement\_vsphere) | 2.14.1-dev1 |
 
 ## Providers
 
@@ -190,10 +190,9 @@ flux-system	flux-system	main@sha1:5902d505	False    	True 	Applied revision: mai
 |------|--------|---------|
 | <a name="module_argocd_k8s"></a> [argocd\_k8s](#module\_argocd\_k8s) | ./modules/argocd_k8s | n/a |
 | <a name="module_gitops_k8s"></a> [gitops\_k8s](#module\_gitops\_k8s) | ./modules/gitops_k8s | n/a |
-| <a name="module_img_proxmox"></a> [img\_proxmox](#module\_img\_proxmox) | ./modules/img_proxmox | n/a |
 | <a name="module_init_k8s"></a> [init\_k8s](#module\_init\_k8s) | ./modules/init_k8s | n/a |
 | <a name="module_talos_k8s"></a> [talos\_k8s](#module\_talos\_k8s) | ./modules/talos_k8s | n/a |
-| <a name="module_vms_proxmox"></a> [vms\_proxmox](#module\_vms\_proxmox) | ./modules/vms_proxmox | n/a |
+| <a name="module_vms_vmware"></a> [vms\_vmware](#module\_vms\_vmware) | ./modules/vms_vmware | n/a |
 
 ## Resources
 
@@ -214,14 +213,16 @@ flux-system	flux-system	main@sha1:5902d505	False    	True 	Applied revision: mai
 | <a name="input_git_credentials"></a> [git\_credentials](#input\_git\_credentials) | Git repository credentials | <pre>object({<br/>    username    = string<br/>    password    = optional(string)<br/>    private_key = optional(string)<br/>  })</pre> | `null` | no |
 | <a name="input_gitops"></a> [gitops](#input\_gitops) | GitOps configuration | <pre>object({<br/>    repository   = string<br/>    token        = string<br/>    cluster_name = string<br/>  })</pre> | `null` | no |
 | <a name="input_pci"></a> [pci](#input\_pci) | Mapping PCI configuration | <pre>map(object({<br/>    name         = string<br/>    id           = string<br/>    iommu_group  = number<br/>    node         = string<br/>    path         = string<br/>    subsystem_id = string<br/>  }))</pre> | `null` | no |
-| <a name="input_proxmox"></a> [proxmox](#input\_proxmox) | Proxmox configuration | <pre>object({<br/>    endpoint           = optional(string)<br/>    insecure           = optional(bool)<br/>    username           = optional(string)<br/>    password           = optional(string)<br/>    realm              = optional(string, "pam")<br/>    api_token          = optional(string)<br/>    ssh_agent          = optional(string, false)<br/>    random_vm_ids      = optional(string, false)<br/>    random_vm_id_start = optional(number, 1000)<br/>    random_vm_id_end   = optional(number, 2000)<br/>    pool               = optional(string)<br/>  })</pre> | n/a | yes |
+| <a name="input_proxmox"></a> [proxmox](#input\_proxmox) | Proxmox configuration | <pre>object({<br/>    endpoint           = optional(string)<br/>    insecure           = optional(bool)<br/>    username           = optional(string)<br/>    password           = optional(string)<br/>    realm              = optional(string, "pam")<br/>    api_token          = optional(string)<br/>    ssh_agent          = optional(string, false)<br/>    random_vm_ids      = optional(string, false)<br/>    random_vm_id_start = optional(number, 1000)<br/>    random_vm_id_end   = optional(number, 2000)<br/>    pool               = optional(string)<br/>  })</pre> | `null` | no |
 | <a name="input_repo"></a> [repo](#input\_repo) | Git repo and path to the ArgoCD Applications | <pre>object({<br/>    name            = string<br/>    repo_url        = string<br/>    branch          = optional(string, "main")<br/>    manifest_path   = string<br/>    project_name    = optional(string, "default")<br/>    recurse         = optional(bool, true)<br/>    ssh_known_hosts = optional(list(string))<br/>  })</pre> | `null` | no |
 | <a name="input_vms"></a> [vms](#input\_vms) | VMs configuration | <pre>map(object({<br/>    host_node        = string<br/>    vm_id            = optional(number)<br/>    talos_extensions = optional(list(string), [])<br/>    schematic_id     = optional(string, "")<br/>    machine_type     = string<br/>    datastore_id     = optional(string, "local-lvm")<br/>    ip               = optional(string)<br/>    cpu              = number<br/>    ram_dedicated    = number<br/>    os_disk = object({<br/>      size      = optional(number, 10)<br/>      interface = optional(string, "scsi")<br/>      cache     = optional(bool, true)<br/>    })<br/>    data_disks = optional(list(object({<br/>      size         = number<br/>      interface    = optional(string, "scsi")<br/>      datastore_id = optional(string)<br/>      type         = optional(string)<br/>      dev          = optional(string)<br/>      name         = optional(string)<br/>      cache        = optional(bool, true)<br/>    })), [])<br/>    install_disk     = optional(string, "/dev/sda")<br/>    disk_file_format = optional(string, "raw")<br/>    gpu              = optional(string)<br/>    time_server      = optional(string)<br/>    kernel_modules   = optional(list(string), [])<br/>    node_labels      = optional(map(any), {})<br/>    custom_network   = optional(string)<br/>  }))</pre> | n/a | yes |
+| <a name="input_vmware"></a> [vmware](#input\_vmware) | VmWare configuration | <pre>object({<br/>    endpoint        = optional(string)<br/>    insecure        = optional(bool)<br/>    username        = optional(string)<br/>    password        = optional(string)<br/>    datacenter      = optional(string)<br/>    content_library = optional(string, "vHosting-ISO")<br/>    cluster         = optional(string)<br/>    folder          = optional(string)<br/>  })</pre> | `null` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
+| <a name="output_aaa"></a> [aaa](#output\_aaa) | n/a |
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | Retrieves the name for a k8s Talos cluster |
 | <a name="output_config_ipv4_addresses"></a> [config\_ipv4\_addresses](#output\_config\_ipv4\_addresses) | Retrieves VM names with IPv4 address for a k8s Talos cluster |
 | <a name="output_kube_config"></a> [kube\_config](#output\_kube\_config) | Retrieves the kubeconfig for a k8s Talos cluster |

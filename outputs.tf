@@ -4,17 +4,17 @@ output "schematic_ids" {
 
 output "vm_ipv4_address_vms" {
   description = "Retrieves IPv4 address for a k8s Talos cluster"
-  value       = local.deploy_stage ? module.vms_proxmox[0].vm_ipv4_address_vms : null
+  value       = local.deploy_stage ? module.vms_vmware[0].vm_ipv4_address_vms : null
 }
 
 output "config_ipv4_addresses" {
   description = "Retrieves VM names with IPv4 address for a k8s Talos cluster"
-  value       = local.deploy_stage ? module.vms_proxmox[0].config_ipv4_addresses : null
+  value       = local.deploy_stage ? module.vms_vmware[0].config_ipv4_addresses : null
 }
 
 output "qemu_ipv4_addresses" {
   description = "Retrieves VM names with IPv4 address for a k8s Talos cluster"
-  value       = local.deploy_stage ? module.vms_proxmox[0].qemu_ipv4_addresses : null
+  value       = "" # local.deploy_stage ? module.vms_vmware[0].qemu_ipv4_addresses : null
 }
 
 output "kube_config" {
@@ -61,4 +61,8 @@ output "cluster_name" {
   description = "Retrieves the name for a k8s Talos cluster"
   value       = var.cluster.name
   sensitive   = false
+}
+output "aaa" {
+  value     = "module.vms_proxmox[0].aaa"
+  sensitive = true
 }

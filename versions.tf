@@ -1,9 +1,9 @@
 terraform {
   required_version = ">= 1.8"
   required_providers {
-    proxmox = {
-      source  = "bpg/proxmox"
-      version = ">=0.78.1"
+    vsphere = {
+      source  = "elsoa-invitech/vsphere"
+      version = "2.14.1-dev1"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"

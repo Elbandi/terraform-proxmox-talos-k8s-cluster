@@ -1,6 +1,11 @@
+locals {
+  prepare_stage = terraform.workspace == "prepare"
+  deploy_stage  = terraform.workspace == "deploy"
+}
+
 module "img_proxmox" {
   source = "./modules/img_proxmox"
-  count  = var.prepare_stage ? 1 : 0
+  count  = local.prepare_stage ? 1 : 0
 
   proxmox               = var.proxmox
   cluster               = var.cluster
@@ -10,7 +15,7 @@ module "img_proxmox" {
 
 module "vms_proxmox" {
   source = "./modules/vms_proxmox"
-  count  = var.deploy_stage ? 1 : 0
+  count  = local.deploy_stage ? 1 : 0
 
   schematic_id        = var.schematic_id
   schematic_nvidia_id = var.schematic_nvidia_id
@@ -24,7 +29,7 @@ module "vms_proxmox" {
 module "talos_k8s" {
   depends_on = [module.vms_proxmox]
   source     = "./modules/talos_k8s"
-  count      = var.deploy_stage ? 1 : 0
+  count      = local.deploy_stage ? 1 : 0
 
   cluster = {
     name                               = var.cluster.name
@@ -45,7 +50,7 @@ module "talos_k8s" {
 module "init_k8s" {
   depends_on = [module.talos_k8s]
   source     = "./modules/init_k8s"
-  count      = var.deploy_stage && (var.certificate != null) ? 1 : 0
+  count      = local.deploy_stage && (var.certificate != null) ? 1 : 0
 
   providers = {
     kubernetes = kubernetes
@@ -58,7 +63,7 @@ module "init_k8s" {
 module "gitops_k8s" {
   depends_on = [module.init_k8s]
   source     = "./modules/gitops_k8s"
-  count      = var.deploy_stage && (var.gitops != null) ? 1 : 0
+  count      = local.deploy_stage && (var.gitops != null) ? 1 : 0
 
   gitops = var.gitops
 }
@@ -66,7 +71,7 @@ module "gitops_k8s" {
 module "argocd_k8s" {
   depends_on = [module.init_k8s]
   source     = "./modules/argocd_k8s"
-  count      = var.deploy_stage && (var.argocd != null) ? 1 : 0
+  count      = local.deploy_stage && (var.argocd != null) ? 1 : 0
 
   argocd          = var.argocd
   git_credentials = var.git_credentials

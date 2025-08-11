@@ -43,5 +43,6 @@ variable "nodes" {
     kernel_modules = optional(list(string), [])
     node_labels    = optional(map(any), {})
     custom_network = optional(string)
+    disk_uuid      = map(string)
   }))
 }

@@ -42,7 +42,8 @@ module "talos_k8s" {
   }
 
   nodes = { for k, vm in var.vms : k => merge(vm, {
-    ip = lookup(module.vms_vmware[0].qemu_ipv4_addresses, k, vm.ip)
+    ip        = lookup(module.vms_vmware[0].qemu_ipv4_addresses, k, vm.ip)
+    disk_uuid = { for i, d in vm.data_disks : lookup(module.vms_vmware[0].vm_disk_ids, k)[i] => "${d.type}-${d.name}-${i + 1}" }
   }) }
 }
 

@@ -47,6 +47,7 @@ resource "talos_machine_configuration_apply" "controlplane" {
       node_labels    = each.value.node_labels
       cni            = var.cluster.cni
       enable_lvm     = anytrue(flatten([for i, n in var.nodes : [for j, d in n.data_disks : d.type == "lvm"]]))
+      disk_uuid      = each.value.disk_uuid
       lvm_setup = templatefile("${path.module}/kubernetes/lvm-setup.yaml", {
         lvm_label_node = true
       })
@@ -112,6 +113,7 @@ resource "talos_machine_configuration_apply" "worker" {
       cloud_provider = var.cluster.cloud_provider
       extra_hosts    = var.cluster.extra_hosts
       registries     = var.cluster.registries
+      disk_uuid      = each.value.disk_uuid
     }),
   ]
 }
@@ -137,6 +139,7 @@ resource "talos_machine_configuration_apply" "worker_gpu" {
       cloud_provider = var.cluster.cloud_provider
       extra_hosts    = var.cluster.extra_hosts
       registries     = var.cluster.registries
+      disk_uuid      = each.value.disk_uuid
     }),
     file("${path.module}/config/gpu-worker-patch.yaml"),
     file("${path.module}/config/nvidia-default-runtimeclass.yaml"),
@@ -174,4 +177,3 @@ data "talos_cluster_health" "this" {
     read = "10m"
   }
 }
-

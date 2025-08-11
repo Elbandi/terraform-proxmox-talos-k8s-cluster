@@ -53,6 +53,12 @@ machine:
           address = "0.0.0.0:11234"
       path: /var/cri/conf.d/metrics.toml
       op: create
+  udev:
+    # List of udev rules to apply to the udev system
+    rules:
+%{ for u, n in disk_uuid ~}
+      - SUBSYSTEM=="block", KERNEL=="sd*", ENV{DEVTYPE}=="disk", ENV{ID_WWN_WITH_EXTENSION}=="0x${u}", SYMLINK+="disk/by-id/scsi-${n}"
+%{ endfor ~}
   nodeLabels:
 %{ for k, v in node_labels ~}
     ${k}: ${v}

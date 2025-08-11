@@ -6,6 +6,14 @@ output "vm_ipv4_address_vms" {
   sensitive = true
 }
 
+output "vm_disk_ids" {
+  description = "Disk ids"
+  value = {
+    for name, vm in vsphere_virtual_machine.vms : trimprefix(name, "${var.cluster.name}-")
+    => [for d in slice(vm.disk, 1, length(vm.disk)) : lower(replace(d.uuid, "-", ""))]
+  }
+}
+
 output "config_ipv4_addresses" {
   description = "IPv4 addresses"
   value = {

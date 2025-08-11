@@ -81,6 +81,7 @@ resource "talos_machine_configuration_apply" "controlplane" {
         swap_size                          = each.value.swap_size
         mounts                             = [for i, v in each.value.user_disks : v.type == "mount"]
         enable_lvm                         = anytrue(flatten([for i, n in var.nodes : [for j, d in n.user_disks : d.type == "lvm"]]))
+        disk_uuid                          = each.value.disk_uuid
         lvm_setup = templatefile("${path.module}/kubernetes/lvm-setup.yaml", {
           lvm_label_node = true
         })
@@ -154,6 +155,7 @@ resource "talos_machine_configuration_apply" "worker" {
         swap_size            = each.value.swap_size
         mounts               = [for i, v in each.value.user_disks : v if v.type == "mount"]
         enable_lvm           = anytrue([for i, v in each.value.user_disks : v.type == "lvm"])
+        disk_uuid            = each.value.disk_uuid
         custom_network       = each.value.custom_network
         cloud_provider       = var.cluster.cloud_provider
         extra_hosts          = var.cluster.extra_hosts
@@ -198,4 +200,3 @@ data "talos_cluster_health" "this" {
     read = "10m"
   }
 }
-

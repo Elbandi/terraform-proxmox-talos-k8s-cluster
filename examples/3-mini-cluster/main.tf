@@ -31,4 +31,26 @@ module "talos_k8s_cluster" {
 
   vmware  = var.vmware
   proxmox = var.proxmox
+
+  argocd = {
+    namespace      = "argocd"
+    chart_version  = "8.2.4"
+    admin_password = "$2a$10$pMupnO9hqU26DYb5nT3dk.xLfrhwGH/beT3runQeIsmipz8oMPJUS" # "csiga"
+  }
+  repo = {
+    name          = "infra-deploy-pod"
+    repo_url      = "git@github.com:owner/test-cluster.git"
+    branch        = "vmware-mini"
+    manifest_path = "infra/apps"
+    ssh_known_hosts = [
+    ]
+  }
+  git_credentials = {
+    username    = "git"
+    private_key = <<EOF
+-----BEGIN OPENSSH PRIVATE KEY-----
+...
+-----END OPENSSH PRIVATE KEY-----
+EOF
+  }
 }

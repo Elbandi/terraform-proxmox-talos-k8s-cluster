@@ -33,6 +33,7 @@ module "talos_k8s" {
 
   cluster = {
     name                               = var.cluster.name
+    id                                 = var.cluster.id
     talos_version                      = var.cluster.talos_version
     kubernetes_version                 = var.cluster.kubernetes_version
     endpoint                           = var.cluster.endpoint

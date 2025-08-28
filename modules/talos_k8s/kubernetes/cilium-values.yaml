@@ -17,6 +17,11 @@ data:
       autoMount:
         enabled: false
       hostRoot: /sys/fs/cgroup
+%{ if cluster_id != 0 ~}
+    cluster:
+      name: ${cluster_name}
+      id: ${cluster_id}
+%{ endif ~}
     ipam:
       mode: kubernetes
     l2announcements:

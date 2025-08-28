@@ -2,6 +2,7 @@ variable "cluster" {
   description = "Cluster configuration"
   type = object({
     name                               = string
+    id                                 = optional(number, 0)
     talos_version                      = optional(string)
     kubernetes_version                 = optional(string)
     endpoint                           = string

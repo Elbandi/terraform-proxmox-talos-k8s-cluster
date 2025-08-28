@@ -5,6 +5,8 @@ variable "cluster" {
     endpoint       = string
     network_dhcp   = optional(bool, false)
     lvm_label_node = optional(bool, true)
+    pod_subnet     = optional(string, "10.244.0.0/16")
+    service_subnet = optional(string, "10.96.0.0/12")
   })
 }
 

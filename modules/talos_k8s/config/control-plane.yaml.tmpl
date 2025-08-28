@@ -56,6 +56,10 @@ cluster:
   network:
     cni:
       name: none
+    podSubnets:
+      - ${pod_subnet}
+    serviceSubnets:
+      - ${service_subnet}
   proxy:
     disabled: true
   inlineManifests:

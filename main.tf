@@ -31,9 +31,11 @@ module "talos_k8s" {
   count      = local.deploy_stage ? 1 : 0
 
   cluster = {
-    name         = var.cluster.name
-    endpoint     = var.cluster.endpoint
-    network_dhcp = var.cluster.network_dhcp
+    name           = var.cluster.name
+    endpoint       = var.cluster.endpoint
+    network_dhcp   = var.cluster.network_dhcp
+    pod_subnet     = var.cluster.pod_subnet
+    service_subnet = var.cluster.service_subnet
   }
 
   nodes = { for k, vm in var.vms : k => merge(vm, {

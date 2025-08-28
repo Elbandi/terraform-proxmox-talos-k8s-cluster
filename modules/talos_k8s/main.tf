@@ -42,7 +42,10 @@ resource "talos_machine_configuration_apply" "controlplane" {
       install_disk   = each.value.install_disk
       time_server    = each.value.time_server
       kernel_modules = each.value.kernel_modules
-      cilium_values  = file("${path.module}/kubernetes/cilium-values.yaml")
+      cilium_values = templatefile("${path.module}/kubernetes/cilium-values.yaml", {
+        cluster_name = var.cluster.name
+        cluster_id   = var.cluster.id
+      })
       cilium_install = file("${path.module}/kubernetes/cilium-install.yaml")
       enable_lvm     = anytrue(flatten([for i, n in var.nodes : [for j, d in n.data_disks : d.type == "lvm"]]))
       lvm_setup = templatefile("${path.module}/kubernetes/lvm-setup.yaml", {

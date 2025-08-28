@@ -32,6 +32,7 @@ module "talos_k8s" {
 
   cluster = {
     name           = var.cluster.name
+    id             = var.cluster.id
     endpoint       = var.cluster.endpoint
     network_dhcp   = var.cluster.network_dhcp
     pod_subnet     = var.cluster.pod_subnet

@@ -40,6 +40,8 @@ module "talos_k8s" {
     allow_scheduling_on_control_planes = var.cluster.allow_scheduling_on_control_planes
     vip_ip                             = var.cluster.vip_ip
     vip_interface                      = var.cluster.vip_interface
+    pod_subnet                         = var.cluster.pod_subnet
+    service_subnet                     = var.cluster.service_subnet
   }
 
   nodes = { for k, vm in var.vms : k => merge(vm, {

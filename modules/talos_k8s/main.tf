@@ -80,6 +80,8 @@ resource "talos_machine_configuration_apply" "controlplane" {
         lvm_setup = templatefile("${path.module}/kubernetes/lvm-setup.yaml", {
           lvm_label_node = true
         })
+        pod_subnet     = var.cluster.pod_subnet
+        service_subnet = var.cluster.service_subnet
       }),
     ],
     # Add GPU patch if this control plane node has a GPU

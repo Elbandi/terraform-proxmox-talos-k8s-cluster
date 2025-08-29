@@ -57,6 +57,22 @@ data "talos_client_configuration" "this" {
   nodes                = concat(local.control_plane_ips, local.worker_ips)
 }
 
+data "helm_template" "cilium_from_values" {
+  name      = "cilium"
+  namespace = "kube-system"
+
+  repository   = "https://helm.cilium.io"
+  chart        = "cilium"
+  version      = "1.18.0"
+  kube_version = data.talos_machine_configuration.controlplane.kubernetes_version
+  values = [templatefile("${path.module}/kubernetes/cilium-values-helm.yaml", {
+    cluster_name = var.cluster.name
+    cluster_id   = var.cluster.id
+  })]
+  validate = false
+  provider = helm.helmtemplate
+}
+
 resource "talos_machine_configuration_apply" "controlplane" {
   client_configuration        = talos_machine_secrets.this.client_configuration
   machine_configuration_input = data.talos_machine_configuration.controlplane.machine_configuration
@@ -98,15 +114,8 @@ resource "talos_machine_configuration_apply" "controlplane" {
       templatefile("${path.module}/config/manifests.yaml.tmpl", {
         manifests = [
           {
-            name = "cilium_values"
-            data = templatefile("${path.module}/kubernetes/cilium-values.yaml", {
-              cluster_name = var.cluster.name
-              cluster_id   = var.cluster.id
-            })
-          },
-          {
-            name = "cilium_install"
-            data = file("${path.module}/kubernetes/cilium-install.yaml")
+            name = "cilium-manifests"
+            data = data.helm_template.cilium_from_values.manifest
           }
         ]
       })

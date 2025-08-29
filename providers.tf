@@ -40,3 +40,10 @@ provider "helm" {
     cluster_ca_certificate = local.kubernetes.cluster_ca_certificate
   }
 }
+
+provider "helm" {
+  kubernetes = {
+
+  }
+  alias = "helmtemplate"
+}

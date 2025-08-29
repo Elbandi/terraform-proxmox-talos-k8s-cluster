@@ -4,12 +4,14 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.8 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.17.0 |
 | <a name="requirement_talos"></a> [talos](#requirement\_talos) | >=0.9.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
+| <a name="provider_helm.helmtemplate"></a> [helm.helmtemplate](#provider\_helm.helmtemplate) | ~> 2.17.0 |
 | <a name="provider_talos"></a> [talos](#provider\_talos) | >=0.9.0 |
 
 ## Modules
@@ -26,6 +28,7 @@ No modules.
 | [talos_machine_configuration_apply.worker](https://registry.terraform.io/providers/siderolabs/talos/latest/docs/resources/machine_configuration_apply) | resource |
 | [talos_machine_configuration_apply.worker_gpu](https://registry.terraform.io/providers/siderolabs/talos/latest/docs/resources/machine_configuration_apply) | resource |
 | [talos_machine_secrets.this](https://registry.terraform.io/providers/siderolabs/talos/latest/docs/resources/machine_secrets) | resource |
+| [helm_template.cilium_from_values](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/data-sources/template) | data source |
 | [talos_client_configuration.this](https://registry.terraform.io/providers/siderolabs/talos/latest/docs/data-sources/client_configuration) | data source |
 | [talos_cluster_health.this](https://registry.terraform.io/providers/siderolabs/talos/latest/docs/data-sources/cluster_health) | data source |
 | [talos_machine_configuration.controlplane](https://registry.terraform.io/providers/siderolabs/talos/latest/docs/data-sources/machine_configuration) | data source |

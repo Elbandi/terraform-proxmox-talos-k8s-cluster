@@ -14,7 +14,6 @@ variable "nodes" {
     machine_type = string
     ip           = string
     install_disk = optional(string, "/dev/sda")
-    data_lvm     = optional(bool, false)
     data_disks = optional(list(object({
       type = optional(string)
       dev  = optional(string)

@@ -36,7 +36,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_cluster"></a> [cluster](#input\_cluster) | Cluster configuration | <pre>object({<br/>    name           = string<br/>    endpoint       = string<br/>    network_dhcp   = optional(bool, false)<br/>    lvm_label_node = optional(bool, true)<br/>  })</pre> | n/a | yes |
-| <a name="input_nodes"></a> [nodes](#input\_nodes) | Configuration for worker nodes | <pre>map(object({<br/>    machine_type = string<br/>    ip           = string<br/>    install_disk = optional(string, "/dev/sda")<br/>    data_lvm     = optional(bool, false)<br/>    data_disks = optional(list(object({<br/>      type = optional(string)<br/>      dev  = optional(string)<br/>      name = optional(string)<br/>    })), [])<br/>    gpu            = optional(string)<br/>    time_server    = optional(string)<br/>    kernel_modules = optional(list(string), [])<br/>  }))</pre> | n/a | yes |
+| <a name="input_nodes"></a> [nodes](#input\_nodes) | Configuration for worker nodes | <pre>map(object({<br/>    machine_type = string<br/>    ip           = string<br/>    install_disk = optional(string, "/dev/sda")<br/>    data_disks = optional(list(object({<br/>      type = optional(string)<br/>      dev  = optional(string)<br/>      name = optional(string)<br/>    })), [])<br/>    gpu            = optional(string)<br/>    time_server    = optional(string)<br/>    kernel_modules = optional(list(string), [])<br/>  }))</pre> | n/a | yes |
 
 ## Outputs
 

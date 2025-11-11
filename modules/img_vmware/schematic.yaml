@@ -7,3 +7,6 @@ customization:
 #      - siderolabs/lldpd
 #      - siderolabs/cloudflared
       - siderolabs/binfmt-misc
+%{ for ext in talos_extensions ~}
+      - ${ext}
+%{ endfor ~}

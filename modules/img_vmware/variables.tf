@@ -9,8 +9,9 @@ variable "vmware" {
 variable "cluster" {
   description = "Cluster configuration"
   type = object({
-    name          = string
-    talos_version = string
+    name             = string
+    talos_version    = string
+    talos_extensions = optional(list(string))
   })
 }
 

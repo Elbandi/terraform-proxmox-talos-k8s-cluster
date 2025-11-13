@@ -35,6 +35,7 @@ module "talos_k8s" {
     id             = var.cluster.id
     endpoint       = var.cluster.endpoint
     network_dhcp   = var.cluster.network_dhcp
+    cni            = var.cluster.cni
     pod_subnet     = var.cluster.pod_subnet
     service_subnet = var.cluster.service_subnet
   }

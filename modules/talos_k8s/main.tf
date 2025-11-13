@@ -43,6 +43,7 @@ resource "talos_machine_configuration_apply" "controlplane" {
       install_disk   = each.value.install_disk
       time_server    = each.value.time_server
       kernel_modules = each.value.kernel_modules
+      cni            = var.cluster.cni
       cilium_values = templatefile("${path.module}/kubernetes/cilium-values.yaml", {
         cluster_name = var.cluster.name
         cluster_id   = var.cluster.id

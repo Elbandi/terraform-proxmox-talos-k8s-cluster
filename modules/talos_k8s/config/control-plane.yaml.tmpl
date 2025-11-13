@@ -68,22 +68,62 @@ cluster:
   allowSchedulingOnControlPlanes: true
   network:
     cni:
+%{ if cni == "calico" ~}
+      name: custom
+      urls:
+        - https://docs.tigera.io/calico/latest/manifests/tigera-operator.yaml
+%{ else ~}
       name: none
+%{ endif ~}
     podSubnets:
       - ${pod_subnet}
     serviceSubnets:
       - ${service_subnet}
+%{ if cni != "calico" ~}
   proxy:
     disabled: true
+%{ endif ~}
   inlineManifests:
 %{ if enable_lvm ~}
   - name: lvm-setup
     contents: |
       ${indent(6, lvm_setup)}
 %{ endif ~}
+%{ if cni == "cilium" ~}
   - name: cilium-values
     contents: |
       ${indent(6, cilium_values)}
   - name: cilium-bootstrap
     contents: |
       ${indent(6, cilium_install)}
+%{ endif ~}
+%{ if cni == "calico" ~}
+  - name: felix
+    contents: |
+      apiVersion: crd.projectcalico.org/v1
+      kind: FelixConfiguration
+      metadata:
+        name: default
+      spec:
+        cgroupV2Path: "/sys/fs/cgroup"
+  - name: install
+    contents: |
+      apiVersion: operator.tigera.io/v1
+      kind: Installation
+      metadata:
+        name: default
+      spec:
+        calicoNetwork:
+          bgp: Disabled
+          linuxDataplane: BPF
+          bpfNetworkBootstrap: Enabled
+          kubeProxyManagement: Enabled
+          ipPools:
+          - name: default-ipv4-ippool
+            blockSize: 26
+            cidr: 10.243.0.0/16
+            encapsulation: VXLAN
+            natOutgoing: Enabled
+            nodeSelector: all()
+        kubeletVolumePluginPath: None
+%{ endif ~}

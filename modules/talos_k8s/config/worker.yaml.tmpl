@@ -8,6 +8,9 @@ machine:
     servers:
       - %{ if time_server != null && time_server != "" }${time_server}%{ else }pool.ntp.org%{ endif }
   kubelet:
+    nodeIP:
+      validSubnets:
+        - ${ cidrhost(format("%s/24", node_ip), 0) }/24
     extraArgs:
       rotate-server-certificates: true
   kernel:

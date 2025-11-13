@@ -35,6 +35,9 @@ machine:
       path: /var/cri/conf.d/metrics.toml
       op: create
   features:
+    kubePrism:
+      enabled: true
+      port: 7445
     kubernetesTalosAPIAccess:
       enabled: true
       allowedRoles:

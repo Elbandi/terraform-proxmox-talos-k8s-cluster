@@ -81,6 +81,8 @@ resource "talos_machine_configuration_apply" "controlplane" {
           cluster_id   = var.cluster.id
         })
         cilium_install = file("${path.module}/kubernetes/cilium-install.yaml")
+        calico_felix   = file("${path.module}/kubernetes/calico-felix.yaml")
+        calico_install = file("${path.module}/kubernetes/calico-install.yaml")
         enable_lvm     = anytrue(flatten([for i, n in var.nodes : [for j, d in n.user_disks : d.type == "lvm"]]))
         lvm_setup = templatefile("${path.module}/kubernetes/lvm-setup.yaml", {
           lvm_label_node = true

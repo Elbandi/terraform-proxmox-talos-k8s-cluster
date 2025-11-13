@@ -52,6 +52,11 @@ machine:
       - kube-system
 
 cluster:
+  discovery:
+    enabled: false
+    registries:
+      service:
+        disabled: true
   etcd:
     advertisedSubnets:
       - ${ cidrhost(format("%s/24", node_ip), 0) }/24

@@ -11,9 +11,14 @@ variable "cluster" {
     vip_ip                             = optional(string)
     vip_interface                      = optional(string, "eth0")
     lvm_label_node                     = optional(bool, true)
+    cni                                = optional(string, "cilium")
     pod_subnet                         = optional(string, "10.244.0.0/16")
     service_subnet                     = optional(string, "10.96.0.0/12")
   })
+  validation {
+    condition     = contains(["cilium", "calico"], var.cluster.cni)
+    error_message = "Allowed values for cni are \"cilium\" or \"calico\"."
+  }
 }
 
 variable "nodes" {

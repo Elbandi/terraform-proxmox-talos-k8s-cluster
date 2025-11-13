@@ -32,6 +32,7 @@ variable "cluster" {
     id                                 = optional(number, 0)
     talos_version                      = optional(string, "v1.12.4")
     kubernetes_version                 = optional(string)
+    additional_extensions              = optional(list(string), [])
     network_dhcp                       = optional(bool, false)
     gateway                            = optional(string)
     dns_domain                         = optional(string)
@@ -48,12 +49,6 @@ variable "cluster" {
     pod_subnet                         = optional(string, "10.244.0.0/16")
     service_subnet                     = optional(string, "10.96.0.0/12")
   })
-}
-
-variable "additional_extensions" {
-  description = "Additional Talos system extensions to include in all images (added to base + GPU-specific extensions defined in modules/vms_proxmox/schematics/)"
-  type        = list(string)
-  default     = []
 }
 
 variable "vms" {

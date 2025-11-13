@@ -31,7 +31,7 @@ locals {
       # GPU-specific extensions (if not base)
       gpu_type != "base" ? local.schematic_templates[gpu_type].customization.systemExtensions.officialExtensions : [],
       # Additional user-provided extensions
-      var.additional_extensions
+      var.cluster.talos_extensions
     )
   }
 

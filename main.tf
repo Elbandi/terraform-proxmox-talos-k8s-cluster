@@ -7,10 +7,9 @@ module "img_proxmox" {
   source = "./modules/img_proxmox"
   count  = local.prepare_stage ? 1 : 0
 
-  proxmox               = var.proxmox
-  cluster               = var.cluster
-  additional_extensions = var.additional_extensions
-  vms                   = var.vms
+  proxmox = var.proxmox
+  cluster = var.cluster
+  vms     = var.vms
 }
 
 module "vms_proxmox" {

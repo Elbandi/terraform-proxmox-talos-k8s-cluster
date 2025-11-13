@@ -57,6 +57,11 @@ machine:
 cluster:
   controlPlane:
     endpoint: https://${vip_ip}:6443
+  discovery:
+    enabled: false
+    registries:
+      service:
+        disabled: true
   etcd:
     advertisedSubnets:
       - ${ cidrhost(format("%s/24", node_ip), 0) }/24

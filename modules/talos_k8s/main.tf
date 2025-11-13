@@ -68,6 +68,7 @@ resource "talos_machine_configuration_apply" "controlplane" {
         talos_version                      = var.cluster.talos_version
         kubernetes_version                 = var.cluster.kubernetes_version
         hostname                           = each.key
+        node_ip                            = each.value.ip
         install_disk                       = each.value.install_disk
         allow_scheduling_on_control_planes = var.cluster.allow_scheduling_on_control_planes
         vip_ip                             = var.cluster.vip_ip
@@ -109,6 +110,7 @@ resource "talos_machine_configuration_apply" "worker" {
         talos_version      = var.cluster.talos_version
         kubernetes_version = var.cluster.kubernetes_version
         hostname           = each.key
+        node_ip            = each.value.ip
         install_disk       = each.value.install_disk
         time_server        = each.value.time_server
         kernel_modules     = each.value.kernel_modules

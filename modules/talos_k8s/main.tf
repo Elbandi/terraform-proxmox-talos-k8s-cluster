@@ -1,4 +1,8 @@
 locals {
+  control_plane_nodes = { for k, v in var.nodes : k => v if v.machine_type == "controlplane" }
+  control_plane_ips   = [for k, v in local.control_plane_nodes : v.ip]
+  worker_nodes        = { for k, v in var.nodes : k => v if v.machine_type == "worker" }
+  worker_ips          = [for k, v in local.worker_nodes : v.ip]
   first_control_plane = [for k, v in var.nodes : v.ip if v.machine_type == "controlplane"][0]
   cluster_vip         = var.cluster.endpoint != null ? "https://${var.cluster.endpoint}:6443" : "https://${local.first_control_plane}:6443"
 }
@@ -22,19 +26,16 @@ data "talos_machine_configuration" "worker" {
 data "talos_client_configuration" "this" {
   cluster_name         = var.cluster.name
   client_configuration = talos_machine_secrets.this.client_configuration
-  endpoints            = [for k, v in var.nodes : v.ip if v.machine_type == "controlplane"]
-  nodes                = [for k, v in var.nodes : v.ip if v.machine_type == "worker"]
+  endpoints            = local.control_plane_ips
+  nodes                = local.worker_ips
 }
 
 resource "talos_machine_configuration_apply" "controlplane" {
   client_configuration        = talos_machine_secrets.this.client_configuration
   machine_configuration_input = data.talos_machine_configuration.controlplane.machine_configuration
-  for_each = {
-    for k, v in var.nodes : k => v
-    if v.machine_type == "controlplane"
-  }
-  node     = each.value.ip
-  endpoint = each.value.ip
+  for_each                    = local.control_plane_nodes
+  node                        = each.value.ip
+  endpoint                    = each.value.ip
   config_patches = [
     templatefile("${path.module}/config/control-plane.yaml.tmpl", {
       hostname       = each.key
@@ -67,8 +68,8 @@ resource "talos_machine_configuration_apply" "worker" {
   client_configuration        = talos_machine_secrets.this.client_configuration
   machine_configuration_input = data.talos_machine_configuration.worker.machine_configuration
   for_each = {
-    for k, v in var.nodes : k => v
-    if v.machine_type == "worker"
+    for k, v in local.worker_nodes : k => v
+    if v.gpu == null
   }
   node = each.value.ip
   config_patches = [
@@ -88,8 +89,8 @@ resource "talos_machine_configuration_apply" "worker_gpu" {
   client_configuration        = talos_machine_secrets.this.client_configuration
   machine_configuration_input = data.talos_machine_configuration.worker.machine_configuration
   for_each = {
-    for k, v in var.nodes : k => v
-    if v.machine_type == "worker" && v.gpu != null
+    for k, v in local.worker_nodes : k => v
+    if v.gpu != null
   }
   node = each.value.ip
   config_patches = [
@@ -112,13 +113,13 @@ resource "talos_machine_bootstrap" "this" {
   depends_on = [talos_machine_configuration_apply.controlplane]
 
   client_configuration = talos_machine_secrets.this.client_configuration
-  node                 = [for k, v in var.nodes : v.ip if v.machine_type == "controlplane"][0]
+  node                 = local.first_control_plane
 }
 
 resource "talos_cluster_kubeconfig" "this" {
   depends_on           = [talos_machine_bootstrap.this]
   client_configuration = talos_machine_secrets.this.client_configuration
-  node                 = [for k, v in var.nodes : v.ip if v.machine_type == "controlplane"][0]
+  node                 = local.first_control_plane
 }
 
 # tflint-ignore: terraform_unused_declarations
@@ -129,8 +130,8 @@ data "talos_cluster_health" "this" {
     talos_machine_bootstrap.this
   ]
   client_configuration   = data.talos_client_configuration.this.client_configuration
-  control_plane_nodes    = [for k, v in var.nodes : v.ip if v.machine_type == "controlplane"]
-  worker_nodes           = [for k, v in var.nodes : v.ip if v.machine_type == "worker"]
+  control_plane_nodes    = local.control_plane_ips
+  worker_nodes           = local.worker_ips
   endpoints              = data.talos_client_configuration.this.endpoints
   skip_kubernetes_checks = true
 

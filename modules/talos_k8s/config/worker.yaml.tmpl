@@ -3,6 +3,10 @@ machine:
     disk: ${install_disk}
   network:
     hostname: ${hostname}
+%{ if custom_network != null ~}
+    interfaces:
+      ${indent(6, custom_network)}
+%{ endif ~}
 # https://www.talos.dev/v1.7/talos-guides/configuration/time-sync/#additional-configuration
   time:
     servers:

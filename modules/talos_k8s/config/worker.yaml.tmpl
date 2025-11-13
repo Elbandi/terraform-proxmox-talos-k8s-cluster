@@ -6,6 +6,10 @@ machine:
 %{ if !startswith(talos_version, "v1.12") ~}
   network:
     hostname: ${hostname}
+%{ if custom_network != null ~}
+    interfaces:
+      ${indent(6, custom_network)}
+%{ endif ~}
 %{ endif ~}
   time:
     servers:
@@ -40,4 +44,8 @@ apiVersion: v1alpha1
 kind: HostnameConfig
 hostname: ${hostname}
 auto: off
+%{ if custom_network != null ~}
+---
+${indent(0, custom_network)}
+%{ endif ~}
 %{ endif ~}

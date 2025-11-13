@@ -30,5 +30,6 @@ variable "nodes" {
     gpu            = optional(string)
     time_server    = optional(string)
     kernel_modules = optional(list(string), [])
+    custom_network = optional(string)
   }))
 }

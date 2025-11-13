@@ -31,6 +31,7 @@ variable "cluster" {
     name                  = string
     id                    = optional(number, 0)
     talos_version         = optional(string, "v1.11.3")
+    talos_extensions      = optional(list(string), [])
     network_dhcp          = optional(bool, false)
     gateway               = optional(string)
     dns_domain            = optional(string)

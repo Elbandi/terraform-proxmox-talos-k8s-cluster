@@ -4,11 +4,11 @@ locals {
   arch        = "amd64"
   version     = var.cluster.talos_version
 
-  schematic    = file("${path.module}/schematic.yaml")
+  schematic    = templatefile("${path.module}/schematic.yaml", { talos_extensions = var.cluster.talos_extensions })
   schematic_id = jsondecode(data.http.schematic_id.response_body)["id"]
   image_id     = "${local.schematic_id}_${local.version}"
 
-  schematic_nvidia    = file("${path.module}/schematic-nvidia.yaml")
+  schematic_nvidia    = templatefile("${path.module}/schematic-nvidia.yaml", { talos_extensions = var.cluster.talos_extensions })
   schematic_nvidia_id = jsondecode(data.http.schematic_nvidia_id.response_body)["id"]
   image_nvidia_id     = "${local.schematic_nvidia_id}_${local.version}"
 }

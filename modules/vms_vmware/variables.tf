@@ -1,11 +1,3 @@
-variable "schematic_id" {
-  type = string
-}
-
-variable "schematic_nvidia_id" {
-  type = string
-}
-
 variable "vmware" {
   description = "VmWare configuration"
   type = object({
@@ -42,6 +34,7 @@ variable "vms" {
     host_node     = string
     machine_type  = string
     vm_id         = optional(number)
+    schematic_id  = optional(string, "")
     datastore_id  = optional(string, "local-lvm")
     ip            = string
     cpu           = number

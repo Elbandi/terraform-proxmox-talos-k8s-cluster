@@ -83,7 +83,7 @@ resource "vsphere_virtual_machine" "vms" {
   datastore_id = data.vsphere_datastore.datastore[each.value.datastore_id].id
 
   clone {
-    template_uuid = data.vsphere_content_library_item.this["${each.value.gpu != null ? local.image_nvidia_id : local.image_id}"].id
+    template_uuid = data.vsphere_content_library_item.this["${each.value.gpu != null ? local.image_nvidia_ids[each.key] : local.image_ids[each.key]}"].id
     #   customize {
     #     linux_options {
     #       host_name = "${var.cluster.name}-${each.key}"

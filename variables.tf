@@ -1,13 +1,3 @@
-variable "schematic_id" {
-  type    = string
-  default = ""
-}
-
-variable "schematic_nvidia_id" {
-  type    = string
-  default = ""
-}
-
 variable "proxmox" {
   description = "Proxmox configuration"
   type = object({
@@ -51,14 +41,16 @@ variable "cluster" {
 variable "vms" {
   description = "VMs configuration"
   type = map(object({
-    host_node     = string
-    vm_id         = optional(number)
-    machine_type  = string
-    datastore_id  = optional(string, "local-lvm")
-    ip            = optional(string)
-    cpu           = number
-    ram_dedicated = number
-    os_disk_size  = optional(number, 10)
+    host_node           = string
+    vm_id               = optional(number)
+    schematic_id        = optional(string, "")
+    schematic_nvidia_id = optional(string, "")
+    machine_type        = string
+    datastore_id        = optional(string, "local-lvm")
+    ip                  = optional(string)
+    cpu                 = number
+    ram_dedicated       = number
+    os_disk_size        = optional(number, 10)
     data_disks = optional(list(object({
       size         = number
       datastore_id = optional(string)

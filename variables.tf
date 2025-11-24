@@ -1,13 +1,3 @@
-variable "schematic_id" {
-  type    = string
-  default = ""
-}
-
-variable "schematic_nvidia_id" {
-  type    = string
-  default = ""
-}
-
 variable "proxmox" {
   description = "Proxmox configuration"
   type = object({
@@ -58,6 +48,7 @@ variable "vms" {
     host_node        = string
     vm_id            = optional(number)
     machine_type     = string
+    schematic_id     = optional(string, "")
     datastore_id     = optional(string, "local-lvm")
     ip               = optional(string)
     cpu              = number

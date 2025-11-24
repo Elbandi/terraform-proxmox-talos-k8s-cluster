@@ -50,7 +50,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
     ssd          = "true"
     file_format  = each.value.disk_file_format
     size         = each.value.system_disk_size
-    file_id      = each.value.gpu != null ? local.image_nvidia_id : local.image_id
+    import_from  = local.image_ids[each.key]
   }
 
   # user disk - csak akkor adja hozzá, ha data_disk letezik

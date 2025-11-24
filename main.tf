@@ -16,9 +16,6 @@ module "vms_proxmox" {
   source = "./modules/vms_proxmox"
   count  = local.deploy_stage ? 1 : 0
 
-  schematic_id        = var.schematic_id
-  schematic_nvidia_id = var.schematic_nvidia_id
-
   proxmox = var.proxmox
   cluster = var.cluster
   vms     = var.vms

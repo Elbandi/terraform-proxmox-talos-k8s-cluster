@@ -8,6 +8,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
   on_boot = true
   started = true
   vm_id   = each.value.vm_id
+  pool_id = var.proxmox.pool != null ? data.proxmox_virtual_environment_pool.pool[0].id : null
 
   bios          = "ovmf"
   machine       = "q35"
@@ -112,6 +113,16 @@ resource "proxmox_virtual_environment_vm" "vms" {
   }
 
 }
+data "proxmox_virtual_environment_pool" "pool" {
+  count   = var.proxmox.pool != null ? 1 : 0
+  pool_id = var.proxmox.pool
+}
+
+# resource "proxmox_virtual_environment_pool_membership" "pool_member" {
+# #  for_each = var.vms
+#   pool_id    = data.proxmox_virtual_environment_pool.pool[0].id
+#   vm_id   = proxmox_virtual_environment_vm.vms[*].id
+# }
 
 resource "time_sleep" "waiting_if_dhcp" {
   depends_on      = [proxmox_virtual_environment_vm.vms]

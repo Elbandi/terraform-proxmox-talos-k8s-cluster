@@ -64,10 +64,11 @@ variable "vms" {
     memory_dedicated = number
     system_disk_size = optional(number, 10)
     user_disks = optional(list(object({
-      size = number
-      type = optional(string)
-      dev  = optional(string)
-      name = optional(string)
+      size         = number
+      datastore_id = optional(string)
+      type         = optional(string)
+      dev          = optional(string)
+      name         = optional(string)
     })), [])
     install_disk     = optional(string, "/dev/sda")
     disk_file_format = optional(string, "raw")

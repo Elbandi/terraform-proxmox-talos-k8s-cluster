@@ -50,7 +50,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
   dynamic "disk" {
     for_each = each.value.data_disks
     content {
-      datastore_id = each.value.datastore_id
+      datastore_id = disk.value.datastore_id != null ? disk.value.datastore_id : each.value.datastore_id
       interface    = "scsi${disk.key + 1}"
       iothread     = true
       cache        = "writethrough"

@@ -52,10 +52,11 @@ variable "vms" {
     ram_dedicated = number
     os_disk_size  = number
     data_disks = optional(list(object({
-      size = number
-      type = optional(string)
-      dev  = optional(string)
-      name = optional(string)
+      size         = number
+      datastore_id = optional(string)
+      type         = optional(string)
+      dev          = optional(string)
+      name         = optional(string)
     })), [])
     disk_file_format = optional(string, "raw")
     gpu              = optional(string)

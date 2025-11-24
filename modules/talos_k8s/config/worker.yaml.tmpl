@@ -32,6 +32,10 @@ machine:
     kubePrism:
       enabled: true
       port: 7445
+  nodeLabels:
+%{ for k, v in node_labels ~}
+    ${k}: ${v}
+%{ endfor ~}
   files:
     - content: |
         [metrics]

@@ -47,6 +47,10 @@ machine:
       allowedKubernetesNamespaces:
       - default
       - kube-system
+  nodeLabels:
+%{ for k, v in node_labels ~}
+    ${k}: ${v}
+%{ endfor ~}
   files:
     - content: |
         [metrics]

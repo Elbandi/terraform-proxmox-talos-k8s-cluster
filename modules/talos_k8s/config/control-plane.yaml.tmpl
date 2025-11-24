@@ -39,6 +39,10 @@ machine:
           address = "0.0.0.0:11234"
       path: /var/cri/conf.d/metrics.toml
       op: create
+  nodeLabels:
+%{ for k, v in node_labels ~}
+    ${k}: ${v}
+%{ endfor ~}
   features:
     kubePrism:
       enabled: true

@@ -44,6 +44,7 @@ resource "talos_machine_configuration_apply" "controlplane" {
       install_disk   = each.value.install_disk
       time_server    = each.value.time_server
       kernel_modules = each.value.kernel_modules
+      node_labels    = each.value.node_labels
       cni            = var.cluster.cni
       cilium_values = templatefile("${path.module}/kubernetes/cilium-values.yaml", {
         cluster_name = var.cluster.name
@@ -79,6 +80,7 @@ resource "talos_machine_configuration_apply" "worker" {
       install_disk   = each.value.install_disk
       time_server    = each.value.time_server
       kernel_modules = each.value.kernel_modules
+      node_labels    = each.value.node_labels
       enable_lvm     = anytrue([for i, d in each.value.data_disks : d.type == "lvm"])
       custom_network = each.value.custom_network
     }),
@@ -100,6 +102,7 @@ resource "talos_machine_configuration_apply" "worker_gpu" {
       install_disk   = each.value.install_disk
       time_server    = each.value.time_server
       kernel_modules = each.value.kernel_modules
+      node_labels    = each.value.node_labels
       enable_lvm     = anytrue([for i, d in each.value.data_disks : d.type == "lvm"])
       custom_network = each.value.custom_network
     }),

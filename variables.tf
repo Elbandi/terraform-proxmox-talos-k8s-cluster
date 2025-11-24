@@ -63,6 +63,7 @@ variable "vms" {
     gpu              = optional(string)
     time_server      = optional(string)
     kernel_modules   = optional(list(string), [])
+    node_labels      = optional(map(any), {})
     custom_network   = optional(string)
   }))
 }

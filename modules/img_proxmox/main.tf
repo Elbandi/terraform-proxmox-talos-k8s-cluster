@@ -51,10 +51,11 @@ locals {
     for gpu_type in local.used_gpu_types : gpu_type => jsondecode(data.http.schematic[gpu_type].response_body)["id"]
   }
 
-  # Image IDs for each GPU type
-  image_ids = {
-    for gpu_type in local.used_gpu_types : gpu_type => "${local.schematic_ids[gpu_type]}_${local.version}"
-  }
+  # Image IDs for each host
+  image_ids = distinct([
+    for k, v in var.vms : { node = v.host_node, id = local.schematic_ids[local.vm_gpu_types[k]] }
+  ])
+
 }
 
 data "http" "schematic" {
@@ -66,13 +67,13 @@ data "http" "schematic" {
 }
 
 resource "proxmox_virtual_environment_download_file" "this" {
-  for_each = toset(distinct([for k, v in var.vms : "${v.host_node}_${local.image_ids[local.vm_gpu_types[k]]}"]))
+  for_each = { for i, v in local.image_ids : "${v.node}_${v.id}_${local.version}" => v }
 
-  node_name    = split("_", each.key)[0]
+  node_name    = each.value.node
   content_type = "import"
   datastore_id = var.proxmox.iso_datastore_id
 
-  file_name = "${var.cluster.name}-talos-${split("_", each.key)[1]}-${split("_", each.key)[2]}-${local.platform}-${local.arch}.qcow2"
-  url       = "${local.factory_url}/image/${split("_", each.key)[1]}/${split("_", each.key)[2]}/${local.platform}-${local.arch}.qcow2"
+  file_name = "${var.cluster.name}-talos-${each.value.id}-${local.version}-${local.platform}-${local.arch}.qcow2"
+  url       = "${local.factory_url}/image/${each.value.id}/${local.version}/${local.platform}-${local.arch}.qcow2"
   overwrite = false
 }

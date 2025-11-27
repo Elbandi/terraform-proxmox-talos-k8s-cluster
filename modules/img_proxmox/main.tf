@@ -4,63 +4,29 @@ locals {
   arch        = "amd64"
   version     = var.cluster.talos_version
 
-  # Load schematic templates
-  schematic_templates = {
-    base   = yamldecode(file("${path.module}/schematics/base.yaml"))
-    nvidia = yamldecode(file("${path.module}/schematics/nvidia.yaml"))
-  }
 
-  # Detect GPU type for each VM
-  vm_gpu_types = {
-    for k, v in var.vms : k => (
-      v.gpu == null ? "base" : (
-        can(regex("(?i)nvidia", v.gpu)) ? "nvidia" : "base"
-      )
-    )
-  }
+  # vmname => schema_data.yaml
+  schematic_nodes = { for k, v in var.vms : k => templatefile("${path.module}/schematics/schematic.yaml.tmpl", {
+    gpu                   = v.gpu
+    additional_extensions = v.additional_extensions
+  }) }
+  # vmname => sha256(schema_data.yaml)
+  schematic_node_hash = { for k, v in local.schematic_nodes : k => sha256(v) }
+  # sha256(schema_data.yaml) => schema_data.yaml
+  schematic_hash = { for k, v in distinct([for schema in local.schematic_nodes : schema]) : sha256(v) => v }
 
-  # Unique GPU types actually used
-  used_gpu_types = toset(values(local.vm_gpu_types))
-
-  # Build merged extension lists for each GPU type
-  # Base extensions + GPU-specific extensions + additional extensions
-  extensions_by_type = {
-    for gpu_type in ["base", "nvidia"] : gpu_type => concat(
-      # Base extensions (always included)
-      local.schematic_templates.base.customization.systemExtensions.officialExtensions,
-      # GPU-specific extensions (if not base)
-      gpu_type != "base" ? local.schematic_templates[gpu_type].customization.systemExtensions.officialExtensions : [],
-      # Additional user-provided extensions
-      var.cluster.talos_extensions
-    )
-  }
-
-  # Generate schematics for each used GPU type
-  schematics = {
-    for gpu_type in local.used_gpu_types : gpu_type => yamlencode({
-      customization = {
-        systemExtensions = {
-          officialExtensions = local.extensions_by_type[gpu_type]
-        }
-      }
-    })
-  }
-
-  # Schematic IDs for each GPU type
-  schematic_ids = {
-    for gpu_type in local.used_gpu_types : gpu_type => jsondecode(data.http.schematic[gpu_type].response_body)["id"]
-  }
-
-  # Image IDs for each host
+  # sha256(schema_data.yaml) => factory_id
+  schematic_ids_data = { for k, v in local.schematic_hash : k => jsondecode(data.http.schematic_id[k].response_body)["id"] }
+  # [{nodename, factory_id}]
   image_ids = distinct([
-    for k, v in var.vms : { node = v.host_node, id = local.schematic_ids[local.vm_gpu_types[k]] }
+    for k, v in var.vms : { node = v.host_node, id = local.schematic_ids_data[local.schematic_node_hash[k]] }
   ])
-
+  # vmname => factory_id
+  vm_schematic_ids = { for k, v in var.vms : k => local.schematic_ids_data[local.schematic_node_hash[k]] }
 }
 
-data "http" "schematic" {
-  for_each = local.schematics
-
+data "http" "schematic_id" {
+  for_each     = local.schematic_hash
   url          = "${local.factory_url}/schematics"
   method       = "POST"
   request_body = each.value

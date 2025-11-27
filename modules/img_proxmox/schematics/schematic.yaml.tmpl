@@ -7,3 +7,10 @@ customization:
 #      - siderolabs/lldpd
 #      - siderolabs/cloudflared
       - siderolabs/binfmt-misc
+%{ if can(regex("(?i)nvidia", gpu)) ~}
+      - siderolabs/nvidia-container-toolkit-production
+      - siderolabs/nonfree-kmod-nvidia-production
+%{ endif ~}
+%{ for ext in additional_extensions ~}
+      - ${ext}
+%{ endfor ~}

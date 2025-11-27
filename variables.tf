@@ -23,7 +23,6 @@ variable "cluster" {
     id                                 = optional(number, 0)
     talos_version                      = optional(string, "v1.12.4")
     kubernetes_version                 = optional(string)
-    additional_extensions              = optional(list(string), [])
     network_dhcp                       = optional(bool, false)
     gateway                            = optional(string)
     dns_domain                         = optional(string)
@@ -45,15 +44,16 @@ variable "cluster" {
 variable "vms" {
   description = "VMs configuration"
   type = map(object({
-    host_node        = string
-    vm_id            = optional(number)
-    machine_type     = string
-    schematic_id     = optional(string, "")
-    datastore_id     = optional(string, "local-lvm")
-    ip               = optional(string)
-    cpu              = number
-    memory_dedicated = number
-    system_disk_size = optional(number, 10)
+    host_node             = string
+    vm_id                 = optional(number)
+    machine_type          = string
+    additional_extensions = optional(list(string), [])
+    schematic_id          = optional(string, "")
+    datastore_id          = optional(string, "local-lvm")
+    ip                    = optional(string)
+    cpu                   = number
+    memory_dedicated      = number
+    system_disk_size      = optional(number, 10)
     user_disks = optional(list(object({
       size         = number
       datastore_id = optional(string)

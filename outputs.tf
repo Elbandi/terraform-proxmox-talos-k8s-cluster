@@ -1,9 +1,5 @@
-output "schematic_id" {
-  value = local.prepare_stage ? module.img_proxmox[0].schematic_id : null
-}
-
-output "schematic_nvidia_id" {
-  value = local.prepare_stage ? module.img_proxmox[0].schematic_nvidia_id : null
+output "schematic_ids" {
+  value = local.prepare_stage ? module.img_proxmox[0].schematic_ids : null
 }
 
 output "vm_ipv4_address_vms" {

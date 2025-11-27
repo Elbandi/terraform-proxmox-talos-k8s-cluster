@@ -19,17 +19,17 @@ variable "proxmox" {
 variable "cluster" {
   description = "Cluster configuration"
   type = object({
-    name             = string
-    talos_version    = string
-    talos_extensions = optional(list(string), [])
+    name          = string
+    talos_version = string
   })
 }
 
 variable "vms" {
   description = "Configuration for cluster nodes"
   type = map(object({
-    host_node    = string
-    datastore_id = optional(string, "local-lvm")
-    gpu          = optional(string)
+    host_node             = string
+    additional_extensions = optional(list(string), [])
+    datastore_id          = optional(string, "local-lvm")
+    gpu                   = optional(string)
   }))
 }

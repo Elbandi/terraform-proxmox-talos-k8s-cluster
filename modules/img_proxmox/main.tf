@@ -6,11 +6,11 @@ locals {
 
   schematic    = templatefile("${path.module}/schematic.yaml", { talos_extensions = var.cluster.talos_extensions })
   schematic_id = jsondecode(data.http.schematic_id.response_body)["id"]
-  image_id     = "${local.schematic_id}_${local.version}"
 
   schematic_nvidia    = templatefile("${path.module}/schematic-nvidia.yaml", { talos_extensions = var.cluster.talos_extensions })
   schematic_nvidia_id = jsondecode(data.http.schematic_nvidia_id.response_body)["id"]
-  image_nvidia_id     = "${local.schematic_nvidia_id}_${local.version}"
+
+  schematic_ids = distinct([for k, v in var.vms : { node = v.host_node, id = v.gpu != null ? local.schematic_nvidia_id : local.schematic_id }])
 }
 
 data "http" "schematic_id" {
@@ -26,14 +26,14 @@ data "http" "schematic_nvidia_id" {
 }
 
 resource "proxmox_virtual_environment_download_file" "this" {
-  for_each = toset(distinct([for k, v in var.vms : "${v.host_node}_${v.gpu != null ? local.image_nvidia_id : local.image_id}"]))
+  for_each = { for i, v in local.schematic_ids : "${v.node}_${v.id}_${local.version}" => v }
 
-  node_name    = split("_", each.key)[0]
+  node_name    = each.value.node
   content_type = "iso"
   datastore_id = var.proxmox.iso_datastore_id
 
-  file_name               = "${var.cluster.name}-talos-${split("_", each.key)[1]}-${split("_", each.key)[2]}-${local.platform}-${local.arch}.img"
-  url                     = "${local.factory_url}/image/${split("_", each.key)[1]}/${split("_", each.key)[2]}/${local.platform}-${local.arch}.raw.gz"
+  file_name               = "${var.cluster.name}-talos-${each.value.id}-${local.version}-${local.platform}-${local.arch}.img"
+  url                     = "${local.factory_url}/image/${each.value.id}/${local.version}/${local.platform}-${local.arch}.raw.gz"
   decompression_algorithm = "gz"
   overwrite               = false
 }

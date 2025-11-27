@@ -1,7 +1,3 @@
-output "schematic_id" {
-  value = local.schematic_id
-}
-
-output "schematic_nvidia_id" {
-  value = local.schematic_nvidia_id
+output "schematic_ids" {
+  value = local.vm_schematic_ids
 }

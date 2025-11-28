@@ -27,10 +27,16 @@ data "vsphere_host" "host" {
   datacenter_id = data.vsphere_datacenter.datacenter.id
 }
 
+data "vsphere_resource_pool" "pool" {
+  count         = var.vmware.pool != null ? 1 : 0
+  datacenter_id = data.vsphere_datacenter.datacenter.id
+  name          = var.vmware.pool
+}
+
 resource "vsphere_virtual_machine" "vms" {
   depends_on       = [data.vsphere_content_library_item.this]
   for_each         = var.vms
-  resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
+  resource_pool_id = var.vmware.pool != null ? data.vsphere_resource_pool.pool[0].id : data.vsphere_compute_cluster.cluster.resource_pool_id
 
   name = "${var.cluster.name}-${each.key}"
   #   tags    = ["terraform", "talos", "k8s", each.value.machine_type, var.cluster.name]

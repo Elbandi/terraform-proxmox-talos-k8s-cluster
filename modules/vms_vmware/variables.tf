@@ -9,6 +9,7 @@ variable "vmware" {
     content_library = optional(string, "vHosting-ISO")
     cluster         = optional(string)
     folder          = optional(string)
+    pool            = optional(string)
   })
   sensitive = true
 }

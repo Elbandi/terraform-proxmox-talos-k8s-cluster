@@ -92,6 +92,7 @@ resource "talos_machine_configuration_apply" "controlplane" {
         pod_subnet     = var.cluster.pod_subnet
         service_subnet = var.cluster.service_subnet
         custom_network = each.value.custom_network
+        cloud_provider = var.cluster.cloud_provider
       }),
     ],
     # Add GPU patch if this control plane node has a GPU
@@ -120,6 +121,7 @@ resource "talos_machine_configuration_apply" "worker" {
         node_labels        = each.value.node_labels
         enable_lvm         = anytrue([for i, v in each.value.user_disks : v.type == "lvm"])
         custom_network     = each.value.custom_network
+        cloud_provider     = var.cluster.cloud_provider
       }),
     ],
     # Add GPU patch if this worker node has a GPU

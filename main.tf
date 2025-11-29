@@ -40,6 +40,7 @@ module "talos_k8s" {
     cni                                = var.cluster.cni
     pod_subnet                         = var.cluster.pod_subnet
     service_subnet                     = var.cluster.service_subnet
+    cloud_provider                     = var.cluster.cloud_provider
   }
 
   nodes = { for k, vm in var.vms : k => merge(vm, {

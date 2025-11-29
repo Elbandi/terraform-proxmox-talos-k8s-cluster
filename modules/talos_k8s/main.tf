@@ -60,6 +60,7 @@ resource "talos_machine_configuration_apply" "controlplane" {
       pod_subnet     = var.cluster.pod_subnet
       service_subnet = var.cluster.service_subnet
       custom_network = each.value.custom_network
+      cloud_provider = var.cluster.cloud_provider
     }),
     file("${path.module}/config/falco-patch.yaml"),
   ]
@@ -83,6 +84,7 @@ resource "talos_machine_configuration_apply" "worker" {
       node_labels    = each.value.node_labels
       enable_lvm     = anytrue([for i, d in each.value.data_disks : d.type == "lvm"])
       custom_network = each.value.custom_network
+      cloud_provider = var.cluster.cloud_provider
     }),
   ]
 }
@@ -105,6 +107,7 @@ resource "talos_machine_configuration_apply" "worker_gpu" {
       node_labels    = each.value.node_labels
       enable_lvm     = anytrue([for i, d in each.value.data_disks : d.type == "lvm"])
       custom_network = each.value.custom_network
+      cloud_provider = var.cluster.cloud_provider
     }),
     file("${path.module}/config/gpu-worker-patch.yaml"),
     file("${path.module}/config/nvidia-default-runtimeclass.yaml"),

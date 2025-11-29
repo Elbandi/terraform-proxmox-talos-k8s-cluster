@@ -16,6 +16,9 @@ machine:
       validSubnets:
         - ${ cidrhost(format("%s/24", node_ip), 0) }/24
     extraArgs:
+%{ if cloud_provider != "none" ~}
+      cloud-provider: external
+%{ endif ~}
       rotate-server-certificates: true
   kernel:
     modules:

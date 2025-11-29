@@ -24,6 +24,9 @@ machine:
       validSubnets:
         - ${ cidrhost(format("%s/24", node_ip), 0) }/24
     extraArgs:
+%{ if cloud_provider != "none" ~}
+      cloud-provider: external
+%{ endif ~}
       rotate-server-certificates: true
   kernel:
     modules:
@@ -72,6 +75,14 @@ cluster:
   scheduler:
     extraArgs:
       bind-address: 0.0.0.0
+%{ if cloud_provider != "none" ~}
+  externalCloudProvider:
+    enabled: true
+    manifests:
+%{ if cloud_provider == "talos" ~}
+      - https://raw.githubusercontent.com/siderolabs/talos-cloud-controller-manager/main/docs/deploy/cloud-controller-manager.yml
+%{ endif ~}
+%{ endif ~}
   extraManifests:
     - https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/main/deploy/standalone-install.yaml
   allowSchedulingOnControlPlanes: true

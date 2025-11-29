@@ -9,10 +9,15 @@ variable "cluster" {
     lvm_label_node = optional(bool, true)
     pod_subnet     = optional(string, "10.244.0.0/16")
     service_subnet = optional(string, "10.96.0.0/12")
+    cloud_provider = optional(string, "none")
   })
   validation {
     condition     = contains(["cilium", "calico"], var.cluster.cni)
     error_message = "Allowed values for cni are \"cilium\" or \"calico\"."
+  }
+  validation {
+    condition     = contains(["none", "talos"], var.cluster.cloud_provider)
+    error_message = "Allowed values for cloud_provider are \"none\" or \"talos\"."
   }
 }
 

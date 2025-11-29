@@ -19,6 +19,7 @@ variable "vms" {
   type = map(object({
     host_node        = string
     talos_extensions = optional(list(string), [])
+    schematic_id     = optional(string, "")
     gpu              = optional(string)
   }))
 }

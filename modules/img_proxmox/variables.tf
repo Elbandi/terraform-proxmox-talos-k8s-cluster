@@ -29,6 +29,7 @@ variable "vms" {
   type = map(object({
     host_node             = string
     additional_extensions = optional(list(string), [])
+    schematic_id          = optional(string, "")
     datastore_id          = optional(string, "local-lvm")
     gpu                   = optional(string)
   }))

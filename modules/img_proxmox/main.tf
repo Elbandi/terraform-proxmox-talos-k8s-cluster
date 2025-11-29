@@ -9,7 +9,7 @@ locals {
   schematic_nodes = { for k, v in var.vms : k => templatefile("${path.module}/schematics/schematic.yaml.tmpl", {
     gpu                   = v.gpu
     additional_extensions = v.additional_extensions
-  }) }
+  }) if !endswith(v.schematic_id, "qcow2") }
   # vmname => sha256(schema_data.yaml)
   schematic_node_hash = { for k, v in local.schematic_nodes : k => sha256(v) }
   # sha256(schema_data.yaml) => schema_data.yaml
@@ -19,10 +19,13 @@ locals {
   schematic_ids_data = { for k, v in local.schematic_hash : k => jsondecode(data.http.schematic_id[k].response_body)["id"] }
   # [{nodename, factory_id}]
   image_ids = distinct([
-    for k, v in var.vms : { node = v.host_node, id = local.schematic_ids_data[local.schematic_node_hash[k]] }
+    for k, v in var.vms : {
+      node = v.host_node,
+      id   = !endswith(v.schematic_id, "qcow2") ? local.schematic_ids_data[local.schematic_node_hash[k]] : trimsuffix(basename(v.schematic_id), ".qcow2")
+    }
   ])
   # vmname => factory_id
-  vm_schematic_ids = { for k, v in var.vms : k => local.schematic_ids_data[local.schematic_node_hash[k]] }
+  vm_schematic_ids = { for k, v in var.vms : k => !endswith(v.schematic_id, "ova") ? local.schematic_ids_data[local.schematic_node_hash[k]] : v.schematic_id }
 }
 
 data "http" "schematic_id" {

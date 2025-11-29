@@ -31,7 +31,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_cluster"></a> [cluster](#input\_cluster) | Cluster configuration | <pre>object({<br/>    name          = string<br/>    talos_version = string<br/>  })</pre> | n/a | yes |
 | <a name="input_proxmox"></a> [proxmox](#input\_proxmox) | Proxmox configuration | <pre>object({<br/>    endpoint           = string<br/>    insecure           = bool<br/>    username           = string<br/>    password           = optional(string)<br/>    realm              = optional(string, "pam")<br/>    api_token          = optional(string)<br/>    ssh_agent          = optional(string, false)<br/>    random_vm_ids      = optional(string, false)<br/>    random_vm_id_start = optional(number, 1000)<br/>    random_vm_id_end   = optional(number, 2000)<br/>    iso_datastore_id   = optional(string, "local")<br/>  })</pre> | n/a | yes |
-| <a name="input_vms"></a> [vms](#input\_vms) | Configuration for cluster nodes | <pre>map(object({<br/>    host_node             = string<br/>    additional_extensions = optional(list(string), [])<br/>    datastore_id          = optional(string, "local-lvm")<br/>    gpu                   = optional(string)<br/>  }))</pre> | n/a | yes |
+| <a name="input_vms"></a> [vms](#input\_vms) | Configuration for cluster nodes | <pre>map(object({<br/>    host_node             = string<br/>    additional_extensions = optional(list(string), [])<br/>    schematic_id          = optional(string, "")<br/>    datastore_id          = optional(string, "local-lvm")<br/>    gpu                   = optional(string)<br/>  }))</pre> | n/a | yes |
 
 ## Outputs
 

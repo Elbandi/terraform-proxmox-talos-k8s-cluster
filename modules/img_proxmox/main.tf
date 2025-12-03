@@ -69,11 +69,10 @@ resource "proxmox_virtual_environment_download_file" "this" {
   for_each = toset(distinct([for k, v in var.vms : "${v.host_node}_${local.image_ids[local.vm_gpu_types[k]]}"]))
 
   node_name    = split("_", each.key)[0]
-  content_type = "iso"
+  content_type = "import"
   datastore_id = var.proxmox.iso_datastore_id
 
-  file_name               = "${var.cluster.name}-talos-${split("_", each.key)[1]}-${split("_", each.key)[2]}-${local.platform}-${local.arch}.img"
-  url                     = "${local.factory_url}/image/${split("_", each.key)[1]}/${split("_", each.key)[2]}/${local.platform}-${local.arch}.raw.gz"
-  decompression_algorithm = "gz"
-  overwrite               = false
+  file_name = "${var.cluster.name}-talos-${split("_", each.key)[1]}-${split("_", each.key)[2]}-${local.platform}-${local.arch}.qcow2"
+  url       = "${local.factory_url}/image/${split("_", each.key)[1]}/${split("_", each.key)[2]}/${local.platform}-${local.arch}.qcow2"
+  overwrite = false
 }

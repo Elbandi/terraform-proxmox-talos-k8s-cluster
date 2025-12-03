@@ -54,7 +54,7 @@ data "talos_client_configuration" "this" {
   cluster_name         = var.cluster.name
   client_configuration = talos_machine_secrets.this.client_configuration
   endpoints            = local.control_plane_ips
-  nodes                = local.worker_ips
+  nodes                = concat(local.control_plane_ips, local.worker_ips)
 }
 
 resource "talos_machine_configuration_apply" "controlplane" {

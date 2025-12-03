@@ -78,14 +78,7 @@ resource "talos_machine_configuration_apply" "controlplane" {
         kernel_modules                     = each.value.kernel_modules
         node_labels                        = each.value.node_labels
         cni                                = var.cluster.cni
-        cilium_values = templatefile("${path.module}/kubernetes/cilium-values.yaml", {
-          cluster_name = var.cluster.name
-          cluster_id   = var.cluster.id
-        })
-        cilium_install = file("${path.module}/kubernetes/cilium-install.yaml")
-        calico_felix   = file("${path.module}/kubernetes/calico-felix.yaml")
-        calico_install = file("${path.module}/kubernetes/calico-install.yaml")
-        enable_lvm     = anytrue(flatten([for i, n in var.nodes : [for j, d in n.user_disks : d.type == "lvm"]]))
+        enable_lvm                         = anytrue(flatten([for i, n in var.nodes : [for j, d in n.user_disks : d.type == "lvm"]]))
         lvm_setup = templatefile("${path.module}/kubernetes/lvm-setup.yaml", {
           lvm_label_node = true
         })
@@ -95,6 +88,37 @@ resource "talos_machine_configuration_apply" "controlplane" {
         cloud_provider = var.cluster.cloud_provider
       }),
     ],
+    var.cluster.cni == "cilium" ? [
+      templatefile("${path.module}/config/manifests.yaml.tmpl", {
+        manifests = [
+          {
+            name = "cilium_values"
+            data = templatefile("${path.module}/kubernetes/cilium-values.yaml", {
+              cluster_name = var.cluster.name
+              cluster_id   = var.cluster.id
+            })
+          },
+          {
+            name = "cilium_install"
+            data = file("${path.module}/kubernetes/cilium-install.yaml")
+          }
+        ]
+      })
+    ] : [],
+    var.cluster.cni == "calico" ? [
+      templatefile("${path.module}/config/manifests.yaml.tmpl", {
+        manifests = [
+          {
+            name = "calico-felix"
+            data = file("${path.module}/kubernetes/calico-felix.yaml")
+          },
+          {
+            name = "calico-install"
+            data = file("${path.module}/kubernetes/calico-install.yaml")
+          },
+        ]
+      })
+    ] : [],
     # Add GPU patch if this control plane node has a GPU
     local.node_gpu_types[each.key] != "none" ? [
       file(local.gpu_patch_files[local.node_gpu_types[each.key]])

@@ -182,8 +182,8 @@ run "gpu_nodes_receive_nvidia_patch" {
   }
 
   assert {
-    condition     = length(talos_machine_configuration_apply.controlplane["cp-0"].config_patches) == 1
-    error_message = "Non-GPU controlplane should have 1 config patch (base template only)"
+    condition     = length(talos_machine_configuration_apply.controlplane["cp-0"].config_patches) == 2
+    error_message = "Non-GPU controlplane should have 2 config patch (base template only)"
   }
 }
 
@@ -202,7 +202,7 @@ run "gpu_controlplane_receives_nvidia_patch" {
   }
 
   assert {
-    condition     = length(talos_machine_configuration_apply.controlplane["cp-gpu"].config_patches) == 2
-    error_message = "GPU controlplane should have 2 config patches (base template + nvidia patch)"
+    condition     = length(talos_machine_configuration_apply.controlplane["cp-gpu"].config_patches) == 3
+    error_message = "GPU controlplane should have 3 config patches (base template + nvidia patch)"
   }
 }

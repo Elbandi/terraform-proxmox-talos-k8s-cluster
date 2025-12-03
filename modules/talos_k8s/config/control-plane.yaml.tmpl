@@ -109,19 +109,3 @@ cluster:
     contents: |
       ${indent(6, lvm_setup)}
 %{ endif ~}
-%{ if cni == "cilium" ~}
-  - name: cilium-values
-    contents: |
-      ${indent(6, cilium_values)}
-  - name: cilium-bootstrap
-    contents: |
-      ${indent(6, cilium_install)}
-%{ endif ~}
-%{ if cni == "calico" ~}
-  - name: calico-felix
-    contents: |
-      ${indent(6, calico_felix)}
-  - name: calico-install
-    contents: |
-      ${indent(6, calico_install)}
-%{ endif ~}

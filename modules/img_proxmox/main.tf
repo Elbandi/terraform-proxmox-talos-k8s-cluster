@@ -30,11 +30,10 @@ resource "proxmox_virtual_environment_download_file" "this" {
   for_each = { for i, v in local.schematic_ids : "${v.node}_${v.id}_${local.version}" => v }
 
   node_name    = each.value.node
-  content_type = "iso"
+  content_type = "import"
   datastore_id = var.proxmox.iso_datastore_id
 
-  file_name               = "${var.cluster.name}-talos-${each.value.id}-${local.version}-${local.platform}-${local.arch}.img"
-  url                     = "${local.factory_url}/image/${each.value.id}/${local.version}/${local.platform}-${local.arch}.raw.gz"
-  decompression_algorithm = "gz"
-  overwrite               = false
+  file_name = "${var.cluster.name}-talos-${each.value.id}-${local.version}-${local.platform}-${local.arch}.qcow2"
+  url       = "${local.factory_url}/image/${each.value.id}/${local.version}/${local.platform}-${local.arch}.qcow2"
+  overwrite = false
 }

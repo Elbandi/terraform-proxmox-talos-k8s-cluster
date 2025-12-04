@@ -1,0 +1,24 @@
+arch: $ARCH
+platform: nocloud
+secureboot: false
+input:
+  kernel:
+    path: /usr/install/amd64/vmlinuz
+  initramfs:
+    path: /usr/install/amd64/initramfs.xz
+  baseInstaller:
+    imageRef: ghcr.io/siderolabs/installer:v1.11.3
+  systemExtensions:
+    - imageRef: ghcr.io/siderolabs/qemu-guest-agent:10.0.2
+    - imageRef: ghcr.io/siderolabs/iscsi-tools:v0.2.0
+    - imageRef: ghcr.io/siderolabs/util-linux-tools:2.41.1
+    - imageRef: ghcr.io/siderolabs/binfmt-misc:v1.11.3
+    - imageRef: ghcr.io/siderolabs/ctr:v2.1.4
+output:
+  kind: $OUTPUT
+  outFormat: raw
+  imageOptions:
+    diskSize: 8589934592
+    diskFormat: ova
+    diskFormatOptions: cluster_size=8k
+    bootloader: dual-boot

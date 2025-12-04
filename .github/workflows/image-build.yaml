@@ -1,0 +1,55 @@
+name: Workflow for building and pushing proxmox installer and ova image
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - tweaks
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        talos_version: [v1.11.3]
+        arch: [amd64]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Installer
+        env:
+          ARCH: ${{ matrix.arch }}
+          OUTPUT: installer
+        run: |
+          envsubst <profile-image.yaml | docker run --rm -i -v /dev:/dev --privileged \
+            -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} -v "$PWD/_out:/out" \
+            "ghcr.io/siderolabs/imager:${{ matrix.talos_version }}" -
+          docker load -i ./_out/installer-${ARCH}.tar
+          docker tag ghcr.io/siderolabs/installer:${{ matrix.talos_version }} ghcr.io/${{ github.repository }}/installer:proxmox-${{ matrix.talos_version }}-${{ matrix.arch }}
+          docker push ghcr.io/${{ github.repository }}/installer:proxmox-${{ matrix.talos_version }}-${{ matrix.arch }}
+
+      - name: Create ISO
+        env:
+          ARCH: ${{ matrix.arch }}
+          OUTPUT: image
+        run: |
+          envsubst <profile-image.yaml | docker run --rm -i -v /dev:/dev --privileged \
+            -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} -v "$PWD/_out:/out" \
+            "ghcr.io/siderolabs/imager:${{ matrix.talos_version }}" -
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: "nocloud-${{ matrix.talos_version }}-${{ matrix.arch }}.ova"
+          path: "_out/nocloud-${{ matrix.arch }}.ova"

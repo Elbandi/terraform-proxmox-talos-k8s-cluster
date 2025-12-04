@@ -63,5 +63,5 @@ jobs:
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: "${{ matrix.talos_version }}-${{ matrix.arch }}.iso"
-          path: "_out/nocloud-${{ matrix.arch }}.iso"
+          name: "${{ matrix.talos_version }}-${{ matrix.arch }}.ova"
+          path: "_out/nocloud-${{ matrix.arch }}.ova"

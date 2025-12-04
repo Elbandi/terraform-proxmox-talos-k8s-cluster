@@ -33,7 +33,7 @@ jobs:
           ARCH: ${{ matrix.arch }}
           OUTPUT: installer
         run: |
-          envsubst <images/profile-proxmox.yaml | docker run --rm -t -v /dev:/dev --privileged \
+          envsubst <images/profile-proxmox.yaml | docker run --rm -i -v /dev:/dev --privileged \
             -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} -v "$PWD/_out:/out" \
             "ghcr.io/siderolabs/imager:${{ matrix.talos_version }}" -
           docker load -i ./_out/installer-${ARCH}.tar

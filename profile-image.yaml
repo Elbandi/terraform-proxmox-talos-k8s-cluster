@@ -1,5 +1,5 @@
 arch: $ARCH
-platform: nocloud
+platform: vmware
 secureboot: false
 input:
   kernel:
@@ -9,7 +9,7 @@ input:
   baseInstaller:
     imageRef: ghcr.io/siderolabs/installer:v1.11.3
   systemExtensions:
-    - imageRef: ghcr.io/siderolabs/qemu-guest-agent:10.0.2
+    - imageRef: ghcr.io/siderolabs/vmtoolsd-guest-agent:v1.4.0
     - imageRef: ghcr.io/siderolabs/iscsi-tools:v0.2.0
     - imageRef: ghcr.io/siderolabs/util-linux-tools:2.41.1
     - imageRef: ghcr.io/siderolabs/binfmt-misc:v1.11.3

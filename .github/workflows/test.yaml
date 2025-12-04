@@ -37,9 +37,8 @@ jobs:
             -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} -v "$PWD/_out:/out" \
             "ghcr.io/siderolabs/imager:${{ matrix.talos_version }}" -
           docker load -i ./_out/installer-${ARCH}.tar
-          docker image ls
-          docker tag ghcr.io/siderolabs/installer:${{ matrix.talos_version }} ${{ github.repository }}/installer:proxmox-${{ matrix.talos_version }}-${{ matrix.arch }}
-          docker push ${{ github.repository }}/installer:proxmox-${{ matrix.talos_version }}-${{ matrix.arch }}
+          docker tag ghcr.io/siderolabs/installer:${{ matrix.talos_version }} ghcr.io/${{ github.repository }}/installer:proxmox-${{ matrix.talos_version }}-${{ matrix.arch }}
+          docker push ghcr.io/${{ github.repository }}/installer:proxmox-${{ matrix.talos_version }}-${{ matrix.arch }}
 
       - name: Create ISO
         env:

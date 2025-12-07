@@ -19,6 +19,7 @@ variable "cluster" {
   type = object({
     name                  = string
     talos_version         = string
+    endpoint              = optional(string)
     network_dhcp          = optional(bool, false)
     gateway               = string
     dns_domain            = optional(string)

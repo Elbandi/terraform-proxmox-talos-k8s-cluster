@@ -17,7 +17,7 @@ output "vm_disk_ids" {
 output "config_ipv4_addresses" {
   description = "IPv4 addresses"
   value = {
-    for name, vm in vsphere_virtual_machine.vms : name => vm.default_ip_address
+    for name, vm in vsphere_virtual_machine.vms : name => element([for ip in vm.guest_ip_addresses : ip if ip != var.cluster.endpoint], 0) if length(vm.guest_ip_addresses) > 0
   }
 }
 
@@ -26,6 +26,7 @@ output "qemu_ipv4_addresses" {
   depends_on  = [time_sleep.waiting_if_dhcp]
   value = {
     for name, vm in vsphere_virtual_machine.vms : trimprefix(name, "${var.cluster.name}-")
-    => vm.default_ip_address
+    => element([for ip in vm.guest_ip_addresses : ip if ip != var.cluster.endpoint], 0)
+    if length(vm.guest_ip_addresses) > 0
   }
 }

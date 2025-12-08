@@ -1,5 +1,5 @@
 #!/bin/sh
-for DEVICE in $(cd /hostfs;ls dev/disk/by-id/scsi-*lvm* 2>/dev/null); do
+for DEVICE in $(cd /hostfs;ls dev/disk/by-id/scsi-*lvm* dev/disk/by-id/virtio-*lvm* 2>/dev/null); do
   NAME=$(expr "$DEVICE" : '.*lvm-\([^\-]\+\)')
   DEVICE=$(realpath /hostfs/$DEVICE)
   if ! chroot /hostfs lvdisplay $NAME/pool &>/dev/null ; then

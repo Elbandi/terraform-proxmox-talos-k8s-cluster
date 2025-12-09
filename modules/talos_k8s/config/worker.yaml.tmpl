@@ -7,6 +7,14 @@ machine:
     interfaces:
       ${indent(6, custom_network)}
 %{ endif ~}
+    extraHostEntries:
+%{ for ip, hosts in extra_hosts ~}
+      - ip: ${ip}
+        aliases:
+%{ for host in hosts ~}
+          - ${host}
+%{ endfor ~}
+%{ endfor ~}
 # https://www.talos.dev/v1.7/talos-guides/configuration/time-sync/#additional-configuration
   time:
     servers:

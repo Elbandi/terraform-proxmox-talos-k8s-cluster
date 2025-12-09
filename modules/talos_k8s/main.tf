@@ -54,6 +54,7 @@ resource "talos_machine_configuration_apply" "controlplane" {
       service_subnet = var.cluster.service_subnet
       custom_network = each.value.custom_network
       cloud_provider = var.cluster.cloud_provider
+      extra_hosts    = var.cluster.extra_hosts
     }),
     var.cluster.cni == "cilium" ? templatefile("${path.module}/config/manifests.yaml.tmpl", {
       manifests = [
@@ -105,6 +106,7 @@ resource "talos_machine_configuration_apply" "worker" {
       enable_lvm     = anytrue([for i, d in each.value.data_disks : d.type == "lvm"])
       custom_network = each.value.custom_network
       cloud_provider = var.cluster.cloud_provider
+      extra_hosts    = var.cluster.extra_hosts
     }),
   ]
 }
@@ -128,6 +130,7 @@ resource "talos_machine_configuration_apply" "worker_gpu" {
       enable_lvm     = anytrue([for i, d in each.value.data_disks : d.type == "lvm"])
       custom_network = each.value.custom_network
       cloud_provider = var.cluster.cloud_provider
+      extra_hosts    = var.cluster.extra_hosts
     }),
     file("${path.module}/config/gpu-worker-patch.yaml"),
     file("${path.module}/config/nvidia-default-runtimeclass.yaml"),

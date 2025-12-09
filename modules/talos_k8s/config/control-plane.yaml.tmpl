@@ -18,6 +18,16 @@ machine:
 %{ if custom_network != null ~}
       ${indent(6, custom_network)}
 %{ endif ~}
+%{ if length(extra_hosts) > 0 ~}
+    extraHostEntries:
+%{ for ip, hosts in extra_hosts ~}
+      - ip: ${ip}
+        aliases:
+%{ for host in hosts ~}
+          - ${host}
+%{ endfor ~}
+%{ endfor ~}
+%{ endif ~}
 %{ endif ~}
   time:
     servers:
@@ -132,4 +142,14 @@ link: ${vip_interface}
 ---
 ${indent(0, custom_network)}
 %{ endif ~}
+%{ for ip, hosts in extra_hosts ~}
+---
+apiVersion: v1alpha1
+kind: StaticHostConfig
+name: ${ip}
+hostnames:
+%{ for host in hosts ~}
+  - ${host}
+%{ endfor ~}
+%{ endfor ~}
 %{ endif ~}

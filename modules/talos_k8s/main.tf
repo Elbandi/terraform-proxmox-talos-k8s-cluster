@@ -86,6 +86,7 @@ resource "talos_machine_configuration_apply" "controlplane" {
         service_subnet = var.cluster.service_subnet
         custom_network = each.value.custom_network
         cloud_provider = var.cluster.cloud_provider
+        extra_hosts    = var.cluster.extra_hosts
       }),
     ],
     var.cluster.cni == "cilium" ? [
@@ -146,6 +147,7 @@ resource "talos_machine_configuration_apply" "worker" {
         enable_lvm         = anytrue([for i, v in each.value.user_disks : v.type == "lvm"])
         custom_network     = each.value.custom_network
         cloud_provider     = var.cluster.cloud_provider
+        extra_hosts        = var.cluster.extra_hosts
       }),
     ],
     # Add GPU patch if this worker node has a GPU

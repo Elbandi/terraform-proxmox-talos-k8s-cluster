@@ -15,6 +15,7 @@ variable "cluster" {
     pod_subnet                         = optional(string, "10.244.0.0/16")
     service_subnet                     = optional(string, "10.96.0.0/12")
     cloud_provider                     = optional(string, "none")
+    extra_hosts                        = optional(map(list(string)), {})
   })
   validation {
     condition     = contains(["cilium", "calico"], var.cluster.cni)

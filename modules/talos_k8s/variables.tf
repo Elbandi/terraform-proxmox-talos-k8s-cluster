@@ -9,6 +9,7 @@ variable "cluster" {
     lvm_label_node = optional(bool, true)
     pod_subnet     = optional(string, "10.244.0.0/16")
     service_subnet = optional(string, "10.96.0.0/12")
+    mtu            = optional(number, 1450)
     cloud_provider = optional(string, "none")
     extra_hosts    = optional(map(list(string)))
   })

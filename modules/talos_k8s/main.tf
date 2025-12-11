@@ -55,6 +55,7 @@ resource "talos_machine_configuration_apply" "controlplane" {
       custom_network = each.value.custom_network
       cloud_provider = var.cluster.cloud_provider
       extra_hosts    = var.cluster.extra_hosts
+      registries     = var.cluster.registries
     }),
     var.cluster.cni == "cilium" ? templatefile("${path.module}/config/manifests.yaml.tmpl", {
       manifests = [
@@ -110,6 +111,7 @@ resource "talos_machine_configuration_apply" "worker" {
       custom_network = each.value.custom_network
       cloud_provider = var.cluster.cloud_provider
       extra_hosts    = var.cluster.extra_hosts
+      registries     = var.cluster.registries
     }),
   ]
 }
@@ -134,6 +136,7 @@ resource "talos_machine_configuration_apply" "worker_gpu" {
       custom_network = each.value.custom_network
       cloud_provider = var.cluster.cloud_provider
       extra_hosts    = var.cluster.extra_hosts
+      registries     = var.cluster.registries
     }),
     file("${path.module}/config/gpu-worker-patch.yaml"),
     file("${path.module}/config/nvidia-default-runtimeclass.yaml"),

@@ -38,6 +38,7 @@ module "talos_k8s" {
     mtu            = var.cluster.mtu
     cloud_provider = var.cluster.cloud_provider
     extra_hosts    = var.cluster.extra_hosts
+    registries     = var.cluster.registries
   }
 
   nodes = { for k, vm in var.vms : k => merge(vm, {

@@ -44,6 +44,14 @@ machine:
 %{ for mod in kernel_modules ~}
       - name: ${mod}
 %{ endfor ~}
+  registries:
+    config:
+%{ for host, auth in registries ~}
+      "${host}":
+        auth:
+          username: ${auth.username}
+          password: ${auth.password}
+%{ endfor ~}
   files:
     - content: |
         [metrics]

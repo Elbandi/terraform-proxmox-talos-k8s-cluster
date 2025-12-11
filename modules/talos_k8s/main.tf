@@ -79,7 +79,9 @@ resource "talos_machine_configuration_apply" "controlplane" {
         },
         {
           name = "calico-install"
-          data = file("${path.module}/kubernetes/calico-install.yaml")
+          data = templatefile("${path.module}/kubernetes/calico-install.yaml.tmpl", {
+            pod_subnet = var.cluster.pod_subnet
+          })
         },
       ]
     }) : "",

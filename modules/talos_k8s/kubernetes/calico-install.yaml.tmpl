@@ -11,8 +11,8 @@ spec:
     kubeProxyManagement: Enabled
     ipPools:
     - name: default-ipv4-ippool
-      blockSize: 26
-      cidr: 10.243.0.0/16
+      blockSize: 24
+      cidr: ${pod_subnet}
       encapsulation: VXLAN
       natOutgoing: Enabled
       nodeSelector: all()

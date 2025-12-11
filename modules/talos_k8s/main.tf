@@ -116,6 +116,7 @@ resource "talos_machine_configuration_apply" "controlplane" {
           {
             name = "calico-install"
             data = templatefile("${path.module}/kubernetes/calico-install.yaml.tmpl", {
+              mtu        = var.cluster.mtu
               pod_subnet = var.cluster.pod_subnet
             })
           },
@@ -189,3 +190,4 @@ data "talos_cluster_health" "this" {
     read = "10m"
   }
 }
+

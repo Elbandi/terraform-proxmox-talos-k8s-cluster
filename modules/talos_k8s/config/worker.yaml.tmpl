@@ -20,6 +20,16 @@ machine:
 %{ endfor ~}
 %{ endfor ~}
 %{ endif ~}
+%{ if length(registries) > 0 ~}
+  registries:
+    config:
+%{ for host, auth in registries ~}
+      "${host}":
+        auth:
+          username: ${auth.username}
+          password: ${auth.password}
+%{ endfor ~}
+%{ endif ~}
 %{ endif ~}
   time:
     servers:
@@ -74,5 +84,13 @@ hostnames:
 %{ for host in hosts ~}
   - ${host}
 %{ endfor ~}
+%{ endfor ~}
+%{ for host, auth in registries ~}
+---
+apiVersion: v1alpha1
+kind: RegistryAuthConfig
+name: ${host}
+username: ${auth.username}
+password: ${auth.password}
 %{ endfor ~}
 %{ endif ~}

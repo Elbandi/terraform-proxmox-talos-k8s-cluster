@@ -87,6 +87,7 @@ resource "talos_machine_configuration_apply" "controlplane" {
         custom_network = each.value.custom_network
         cloud_provider = var.cluster.cloud_provider
         extra_hosts    = var.cluster.extra_hosts
+        registries     = var.cluster.registries
       }),
     ],
     var.cluster.cni == "cilium" ? [
@@ -151,6 +152,7 @@ resource "talos_machine_configuration_apply" "worker" {
         custom_network     = each.value.custom_network
         cloud_provider     = var.cluster.cloud_provider
         extra_hosts        = var.cluster.extra_hosts
+        registries         = var.cluster.registries
       }),
     ],
     # Add GPU patch if this worker node has a GPU

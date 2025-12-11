@@ -17,6 +17,10 @@ variable "cluster" {
     mtu                                = optional(number, 1450)
     cloud_provider                     = optional(string, "none")
     extra_hosts                        = optional(map(list(string)), {})
+    registries = optional(map(object({
+      username = string
+      password = string
+    })), {})
   })
   validation {
     condition     = contains(["cilium", "calico"], var.cluster.cni)

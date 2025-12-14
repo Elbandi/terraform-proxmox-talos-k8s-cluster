@@ -44,7 +44,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
   # system disk
   disk {
     datastore_id = each.value.datastore_id
-    interface    = "scsi0"
+    interface    = "${each.value.system_disk.interface}0"
     cache        = "writethrough"
     discard      = "on"
     ssd          = "true"
@@ -58,7 +58,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
     for_each = each.value.user_disks
     content {
       datastore_id = disk.value.datastore_id != null ? disk.value.datastore_id : each.value.datastore_id
-      interface    = "scsi${disk.key + 1}"
+      interface    = "${disk.value.interface}${disk.key + 1}"
       iothread     = true
       cache        = "writethrough"
       discard      = "on"
@@ -69,7 +69,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
     }
   }
 
-  boot_order = ["scsi0"]
+  boot_order = ["${each.value.system_disk.interface}0"]
 
   operating_system {
     type = "l26"

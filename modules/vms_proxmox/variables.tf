@@ -44,10 +44,12 @@ variable "vms" {
     cpu              = number
     memory_dedicated = number
     system_disk = object({
-      size = number
+      size      = number
+      interface = optional(string, "scsi")
     })
     user_disks = optional(list(object({
       size         = number
+      interface    = optional(string, "scsi")
       datastore_id = optional(string)
       type         = optional(string)
       dev          = optional(string)

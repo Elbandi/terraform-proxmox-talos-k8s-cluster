@@ -173,7 +173,7 @@ flux-system	flux-system	main@sha1:5902d505	False    	True 	Applied revision: mai
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.8 |
 | <a name="requirement_flux"></a> [flux](#requirement\_flux) | >=1.6.4 |
-| <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.17.0 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 3.1 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >=2.38.0 |
 | <a name="requirement_local"></a> [local](#requirement\_local) | >=2.5.3 |
 | <a name="requirement_proxmox"></a> [proxmox](#requirement\_proxmox) | >=0.78.1 |

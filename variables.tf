@@ -47,17 +47,19 @@ variable "cluster" {
 variable "vms" {
   description = "VMs configuration"
   type = map(object({
-    host_node         = string
-    vm_id             = optional(number)
-    talos_extensions  = optional(list(string), [])
-    schematic_id      = optional(string, "")
-    machine_type      = string
-    datastore_id      = optional(string, "local-lvm")
-    os_disk_interface = optional(string, "scsi")
-    ip                = optional(string)
-    cpu               = number
-    ram_dedicated     = number
-    os_disk_size      = optional(number, 10)
+    host_node        = string
+    vm_id            = optional(number)
+    talos_extensions = optional(list(string), [])
+    schematic_id     = optional(string, "")
+    machine_type     = string
+    datastore_id     = optional(string, "local-lvm")
+    ip               = optional(string)
+    cpu              = number
+    ram_dedicated    = number
+    os_disk = object({
+      size      = optional(number, 10)
+      interface = optional(string, "scsi")
+    })
     data_disks = optional(list(object({
       size         = number
       interface    = optional(string, "scsi")

@@ -36,13 +36,13 @@ resource "proxmox_virtual_environment_vm" "vms" {
   # boot disk
   disk {
     datastore_id = each.value.datastore_id
-    interface    = "${each.value.os_disk_interface}0"
+    interface    = "${each.value.os_disk.interface}0"
     iothread     = true
     cache        = "writethrough"
     discard      = "on"
     ssd          = true
     file_format  = each.value.disk_file_format
-    size         = each.value.os_disk_size
+    size         = each.value.os_disk.size
     import_from  = local.image_ids[each.key]
   }
 
@@ -62,7 +62,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
     }
   }
 
-  boot_order = ["${each.value.os_disk_interface}0"]
+  boot_order = ["${each.value.os_disk.interface}0"]
 
   operating_system {
     type = "l26"

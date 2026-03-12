@@ -43,7 +43,9 @@ variable "vms" {
     ip               = string
     cpu              = number
     memory_dedicated = number
-    system_disk_size = number
+    system_disk = object({
+      size = number
+    })
     user_disks = optional(list(object({
       size         = number
       datastore_id = optional(string)

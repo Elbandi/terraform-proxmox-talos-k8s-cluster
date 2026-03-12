@@ -49,7 +49,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
     discard      = "on"
     ssd          = "true"
     file_format  = each.value.disk_file_format
-    size         = each.value.system_disk_size
+    size         = each.value.system_disk.size
     import_from  = local.image_ids[each.key]
   }
 

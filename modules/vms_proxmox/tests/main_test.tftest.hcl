@@ -51,7 +51,7 @@ variables {
       ip               = "192.168.1.10"
       cpu              = 2
       memory_dedicated = 4096
-      system_disk_size = 10
+      system_disk      = { size = 10 }
       user_disk        = { size = 20 }
     }
   }
@@ -108,7 +108,7 @@ run "vm_count_matches_input" {
         ip               = "192.168.1.10"
         cpu              = 2
         memory_dedicated = 4096
-        system_disk_size = 10
+        system_disk      = { size = 10 }
         user_disk        = { size = 20 }
       }
       "cp-1" = {
@@ -117,7 +117,7 @@ run "vm_count_matches_input" {
         ip               = "192.168.1.11"
         cpu              = 2
         memory_dedicated = 4096
-        system_disk_size = 10
+        system_disk      = { size = 10 }
         user_disk        = { size = 20 }
       }
       "worker-0" = {
@@ -126,7 +126,7 @@ run "vm_count_matches_input" {
         ip               = "192.168.1.20"
         cpu              = 4
         memory_dedicated = 8192
-        system_disk_size = 20
+        system_disk      = { size = 20 }
         user_disk        = { size = 50 }
       }
     }

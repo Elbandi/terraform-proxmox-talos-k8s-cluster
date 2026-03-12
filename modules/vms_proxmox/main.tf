@@ -38,7 +38,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
     datastore_id = each.value.datastore_id
     interface    = "${each.value.os_disk.interface}0"
     iothread     = true
-    cache        = "writethrough"
+    cache        = each.value.os_disk.cache ? "writethrough" : "none"
     discard      = "on"
     ssd          = true
     file_format  = each.value.disk_file_format
@@ -53,7 +53,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
       datastore_id = disk.value.datastore_id != null ? disk.value.datastore_id : each.value.datastore_id
       interface    = "${disk.value.interface}${disk.key + 1}"
       iothread     = true
-      cache        = "writethrough"
+      cache        = disk.value.cache ? "writethrough" : "none"
       discard      = "on"
       ssd          = true
       file_format  = each.value.disk_file_format

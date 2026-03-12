@@ -63,6 +63,7 @@ variable "vms" {
     system_disk = object({
       size      = optional(number, 10)
       interface = optional(string, "scsi")
+      cache     = optional(bool, true)
     })
     user_disks = optional(list(object({
       size         = number
@@ -71,6 +72,7 @@ variable "vms" {
       type         = optional(string)
       dev          = optional(string)
       name         = optional(string)
+      cache        = optional(bool, true)
     })), [])
     install_disk     = optional(string, "/dev/sda")
     disk_file_format = optional(string, "raw")

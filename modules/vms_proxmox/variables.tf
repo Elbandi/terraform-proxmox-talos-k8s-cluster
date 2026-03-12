@@ -46,6 +46,7 @@ variable "vms" {
     system_disk = object({
       size      = number
       interface = optional(string, "scsi")
+      cache     = optional(bool, true)
     })
     user_disks = optional(list(object({
       size         = number
@@ -54,6 +55,7 @@ variable "vms" {
       type         = optional(string)
       dev          = optional(string)
       name         = optional(string)
+      cache        = optional(bool, true)
     })), [])
     disk_file_format = optional(string, "raw")
     gpu              = optional(string)

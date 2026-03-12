@@ -16,6 +16,9 @@ data "vsphere_compute_cluster" "cluster" {
 data "vsphere_network" "network" {
   name          = var.cluster.network_device_bridge
   datacenter_id = data.vsphere_datacenter.datacenter.id
+  filter {
+    network_type = "Network"
+  }
 }
 
 data "vsphere_host" "host" {

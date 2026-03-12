@@ -87,7 +87,7 @@ resource "vsphere_virtual_machine" "vms" {
 
   disk {
     label = "Hard disk 1"
-    size  = each.value.os_disk_size
+    size  = each.value.os_disk.size
   }
   datastore_id = data.vsphere_datastore.datastore[each.value.datastore_id].id
 

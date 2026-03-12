@@ -41,7 +41,10 @@ variable "vms" {
     ip            = string
     cpu           = number
     ram_dedicated = number
-    os_disk_size  = number
+    os_disk = object({
+      size      = number
+      interface = optional(string, "scsi")
+    })
     data_disks = optional(list(object({
       size = number
       type = optional(string)

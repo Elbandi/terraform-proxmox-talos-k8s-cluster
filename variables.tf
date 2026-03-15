@@ -19,6 +19,7 @@ variable "cluster" {
   type = object({
     name                               = string
     talos_version                      = optional(string, "v1.12.4")
+    kubernetes_version                 = optional(string)
     network_dhcp                       = optional(bool, false)
     gateway                            = optional(string)
     dns_domain                         = optional(string)

@@ -29,17 +29,21 @@ locals {
 resource "talos_machine_secrets" "this" {}
 
 data "talos_machine_configuration" "controlplane" {
-  cluster_name     = var.cluster.name
-  cluster_endpoint = "https://${local.cluster_endpoint}:6443"
-  machine_type     = "controlplane"
-  machine_secrets  = talos_machine_secrets.this.machine_secrets
+  cluster_name       = var.cluster.name
+  cluster_endpoint   = "https://${local.cluster_endpoint}:6443"
+  machine_type       = "controlplane"
+  machine_secrets    = talos_machine_secrets.this.machine_secrets
+  talos_version      = var.cluster.talos_version
+  kubernetes_version = var.cluster.kubernetes_version
 }
 
 data "talos_machine_configuration" "worker" {
-  cluster_name     = var.cluster.name
-  cluster_endpoint = "https://${local.cluster_endpoint}:6443"
-  machine_type     = "worker"
-  machine_secrets  = talos_machine_secrets.this.machine_secrets
+  cluster_name       = var.cluster.name
+  cluster_endpoint   = "https://${local.cluster_endpoint}:6443"
+  machine_type       = "worker"
+  machine_secrets    = talos_machine_secrets.this.machine_secrets
+  talos_version      = var.cluster.talos_version
+  kubernetes_version = var.cluster.kubernetes_version
 }
 
 data "talos_client_configuration" "this" {

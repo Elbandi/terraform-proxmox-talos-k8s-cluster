@@ -2,6 +2,8 @@ variable "cluster" {
   description = "Cluster configuration"
   type = object({
     name                               = string
+    talos_version                      = optional(string)
+    kubernetes_version                 = optional(string)
     endpoint                           = string
     network_dhcp                       = optional(bool, false)
     allow_scheduling_on_control_planes = optional(bool, true)

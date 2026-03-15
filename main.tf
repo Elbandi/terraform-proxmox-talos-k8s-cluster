@@ -24,6 +24,8 @@ module "talos_k8s" {
 
   cluster = {
     name                               = var.cluster.name
+    talos_version                      = var.cluster.talos_version
+    kubernetes_version                 = var.cluster.kubernetes_version
     endpoint                           = var.cluster.endpoint
     network_dhcp                       = var.cluster.network_dhcp
     allow_scheduling_on_control_planes = var.cluster.allow_scheduling_on_control_planes

@@ -19,6 +19,9 @@ terraform test
 # talos_k8s module tests (endpoint priority, node segregation, GPU patches)
 cd modules/talos_k8s && terraform test
 
+# img_proxmox module tests
+cd modules/img_proxmox && terraform test
+
 # vms_proxmox module tests (VM naming, count, networking, PCI mapping)
 cd modules/vms_proxmox && terraform test
 ```
@@ -57,23 +60,28 @@ tofu output kube_config    # Get kubeconfig
 
 ### Module execution order (enforced by `depends_on`)
 ```
-vms_proxmox  →  talos_k8s  →  init_k8s (optional)  →  gitops_k8s (optional)
+img_proxmox → vms_proxmox  →  talos_k8s  →  init_k8s (optional)  →  gitops_k8s (optional)
 ```
 
-1. **`modules/vms_proxmox`** — Creates Proxmox VMs. Downloads the correct Talos image from `factory.talos.dev` based on the schematic (extensions) for each VM's GPU type. Each unique (host_node, schematic) combination gets its own image download. VMs use OVMF/UEFI, q35 machine type, virtio-scsi-pci. Two disks per VM: system (boots Talos) and user (data).
+1. **`modules/img_proxmox`** — Resolves Talos image identifiers per VM and downloads images to Proxmox. The behavior depends on the `schematic_id` field of each VM:
+   - **ends with `.ova`**: returned as-is in `schematic_ids` (pre-existing image, no download)
+   - **ends with `.qcow2`**: treated as a URL; the image is downloaded to Proxmox via `proxmox_virtual_environment_download_file`, and the qcow2 filename (without extension) is returned in `schematic_ids`
+   - **anything else** (or empty): a YAML schematic is rendered from templates (base extensions + GPU-specific extensions + `additional_extensions`), POSTed to `https://factory.talos.dev/schematics`, and the returned schematic ID is used to download the image and is returned in `schematic_ids`; identical schematics across VMs are deduplicated so each unique (host_node, schematic) combination results in one download
 
-2. **`modules/talos_k8s`** — Generates Talos machine secrets, applies machine configs to each node via the Talos API, bootstraps etcd on the first control plane, and retrieves the kubeconfig. Config patches are applied per-node using templates in `config/`. Cilium CNI, ZFS setup, and optional GPU patches are embedded inline into the Talos machine config at apply time (not post-boot).
+2. **`modules/vms_proxmox`** — Creates Proxmox VMs. Downloads the correct Talos image from `factory.talos.dev` based on the schematic (extensions) for each VM's GPU type. Each unique (host_node, schematic) combination gets its own image download. VMs use OVMF/UEFI, q35 machine type, virtio-scsi-pci. Two disks per VM: system (boots Talos) and user (data).
 
-3. **`modules/init_k8s`** — Optional (only runs if `certificate` input is non-null). Installs the sealed-secrets TLS certificate into the cluster as a Kubernetes secret.
+3. **`modules/talos_k8s`** — Generates Talos machine secrets, applies machine configs to each node via the Talos API, bootstraps etcd on the first control plane, and retrieves the kubeconfig. Config patches are applied per-node using templates in `config/`. Cilium CNI, ZFS setup, and optional GPU patches are embedded inline into the Talos machine config at apply time (not post-boot).
 
-4. **`modules/gitops_k8s`** — Optional (only runs if `gitops` input is non-null). Runs `flux_bootstrap_git` to connect the cluster to a Git repository.
+4. **`modules/init_k8s`** — Optional (only runs if `certificate` input is non-null). Installs the sealed-secrets TLS certificate into the cluster as a Kubernetes secret.
+
+5. **`modules/gitops_k8s`** — Optional (only runs if `gitops` input is non-null). Runs `flux_bootstrap_git` to connect the cluster to a Git repository.
 
 ### Talos image schematic system
-- `modules/vms_proxmox/schematics/base.yaml` — base extensions for all nodes (`qemu-guest-agent`, `zfs`)
-- `modules/vms_proxmox/schematics/nvidia.yaml` — additional extensions for NVIDIA GPU nodes
-- Extension lists are merged: base + GPU-specific + `additional_extensions` input variable
-- Schematic ID is obtained at plan time by POST to `https://factory.talos.dev/schematics`
-- Image URL is constructed as `factory.talos.dev/image/{schematic_id}/{version}/nocloud-amd64.raw.gz`
+- `modules/img_proxmox/schematics/schematic.yaml` — single template rendered per VM; base extensions are always included (`qemu-guest-agent`, `iscsi-tools`, `util-linux-tools`, `binfmt-misc`)
+- NVIDIA GPU nodes additionally get `nvidia-container-toolkit-production` and `nonfree-kmod-nvidia-production` extensions (conditional on `gpu == "nvidia"`)
+- Additional extensions from the `additional_extensions` input variable are appended after the built-in ones
+- Identical rendered schematics are deduplicated (by SHA-256) before calling the factory, so the POST to `https://factory.talos.dev/schematics` happens once per unique schematic
+- Image is downloaded as `{cluster.name}-talos-{schematic_id}-{version}-nocloud-amd64.qcow2` to the Proxmox ISO datastore via `proxmox_virtual_environment_download_file`
 
 ### Cluster endpoint resolution priority (in `modules/talos_k8s/main.tf`)
 1. `vip_ip` (if set — HA Virtual IP via Talos VIP feature)

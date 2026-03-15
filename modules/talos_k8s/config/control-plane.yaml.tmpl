@@ -6,8 +6,16 @@ machine:
 %{ if !startswith(talos_version, "v1.12") ~}
   network:
     hostname: ${hostname}
-%{ if custom_network != null ~}
+%{ if vip_ip != null || custom_network != null ~}
     interfaces:
+%{ endif ~}
+%{ if vip_ip != null ~}
+      - deviceSelector:
+          physical: true
+        vip:
+          ip: ${vip_ip}
+%{ endif ~}
+%{ if custom_network != null ~}
       ${indent(6, custom_network)}
 %{ endif ~}
 %{ endif ~}
@@ -47,6 +55,8 @@ machine:
       op: create
 
 cluster:
+  controlPlane:
+    endpoint: https://${vip_ip}:6443
   etcd:
     advertisedSubnets:
       - ${ cidrhost(format("%s/24", node_ip), 0) }/24

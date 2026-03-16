@@ -64,7 +64,7 @@ resource "vsphere_virtual_machine" "vms" {
   #     numa  = true
   #   }
 
-  memory                 = each.value.ram_dedicated
+  memory                 = each.value.memory_dedicated
   memory_hot_add_enabled = true
   #   memory {
   #     dedicated = each.value.ram_dedicated
@@ -81,7 +81,7 @@ resource "vsphere_virtual_machine" "vms" {
 
   disk {
     label = "Hard disk 1"
-    size  = each.value.os_disk.size
+    size  = each.value.system_disk.size
   }
   datastore_id = data.vsphere_datastore.datastore[each.value.datastore_id].id
 
@@ -117,7 +117,7 @@ resource "vsphere_virtual_machine" "vms" {
 
   # data disk - csak akkor adja hozzá, ha data_disk letezik
   dynamic "disk" {
-    for_each = each.value.data_disks
+    for_each = each.value.user_disks
     content {
       label       = "Hard disk ${disk.key + 2}"
       size        = disk.value.size

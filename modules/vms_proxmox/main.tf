@@ -12,7 +12,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
 
   bios          = "ovmf"
   machine       = "q35"
-  scsi_hardware = "virtio-scsi-pci"
+  scsi_hardware = "virtio-scsi-single"
 
   agent {
     enabled = true
@@ -45,6 +45,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
   disk {
     datastore_id = each.value.datastore_id
     interface    = "${each.value.system_disk.interface}0"
+    iothread     = true
     cache        = each.value.system_disk.cache ? "writethrough" : "none"
     discard      = "on"
     ssd          = "true"

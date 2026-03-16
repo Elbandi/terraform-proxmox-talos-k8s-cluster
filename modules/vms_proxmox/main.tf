@@ -108,6 +108,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
 
   lifecycle {
     ignore_changes = [
+      node_name,
       initialization[0].dns[0]
     ]
   }

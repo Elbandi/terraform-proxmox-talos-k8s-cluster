@@ -17,9 +17,10 @@ variable "cluster" {
 variable "vms" {
   description = "Configuration for cluster nodes"
   type = map(object({
-    host_node        = string
-    talos_extensions = optional(list(string), [])
-    schematic_id     = optional(string, "")
-    gpu              = optional(string)
+    host_node             = string
+    additional_extensions = optional(list(string), [])
+    schematic_id          = optional(string, "")
+    datastore_id          = optional(string, "local-lvm")
+    gpu                   = optional(string)
   }))
 }

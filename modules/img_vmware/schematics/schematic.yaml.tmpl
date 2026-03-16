@@ -1,12 +1,16 @@
 customization:
   systemExtensions:
     officialExtensions:
-      - siderolabs/vmtoolsd-guest-agent
+      - siderolabs/qemu-guest-agent
       - siderolabs/iscsi-tools
       - siderolabs/util-linux-tools
 #      - siderolabs/lldpd
 #      - siderolabs/cloudflared
       - siderolabs/binfmt-misc
-%{ for ext in talos_extensions ~}
+%{ if can(regex("(?i)nvidia", gpu)) ~}
+      - siderolabs/nvidia-container-toolkit-production
+      - siderolabs/nonfree-kmod-nvidia-production
+%{ endif ~}
+%{ for ext in additional_extensions ~}
       - ${ext}
 %{ endfor ~}

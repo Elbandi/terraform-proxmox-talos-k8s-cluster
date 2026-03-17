@@ -221,7 +221,7 @@ The module is composed of four sub-modules executed in order:
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 3.1 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 3.0 |
 | <a name="requirement_local"></a> [local](#requirement\_local) | ~> 2.6 |
-| <a name="requirement_vsphere"></a> [vsphere](#requirement\_vsphere) | 2.14.1-dev1 |
+| <a name="requirement_vsphere"></a> [vsphere](#requirement\_vsphere) | 2.15.0-dev1 |
 
 ## Providers
 

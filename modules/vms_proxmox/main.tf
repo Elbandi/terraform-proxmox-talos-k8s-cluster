@@ -53,20 +53,35 @@ resource "proxmox_virtual_environment_vm" "vms" {
     size         = each.value.system_disk.size
     import_from  = local.image_ids[each.key]
   }
+  # swap
+  dynamic "disk" {
+    for_each = each.value.swap_size > 0 ? [1] : []
+    content {
+      datastore_id = each.value.datastore_id
+      interface    = "${each.value.system_disk.interface}1"
+      iothread     = true
+      cache        = each.value.system_disk.cache ? "writethrough" : "none"
+      discard      = "on"
+      ssd          = "true"
+      file_format  = each.value.disk_file_format
+      size         = each.value.swap_size
+      serial       = "swap"
+    }
+  }
 
   # user disk - csak akkor adja hozzá, ha data_disk letezik
   dynamic "disk" {
     for_each = each.value.user_disks
     content {
       datastore_id = disk.value.datastore_id != null ? disk.value.datastore_id : each.value.datastore_id
-      interface    = "${disk.value.interface}${disk.key + 1}"
+      interface    = "${disk.value.interface}${disk.key + 4}"
       iothread     = true
       cache        = disk.value.cache ? "writethrough" : "none"
       discard      = "on"
       ssd          = true
       file_format  = each.value.disk_file_format
       size         = disk.value.size
-      serial       = disk.value.type != null ? "${disk.value.type}-${disk.value.name}-${disk.key + 1}" : null
+      serial       = disk.value.type != null ? "${disk.value.type}-${disk.value.name}-${disk.key}" : null
     }
   }
 

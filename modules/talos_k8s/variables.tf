@@ -37,6 +37,7 @@ variable "nodes" {
   type = map(object({
     machine_type = string
     ip           = string
+    swap_size    = optional(number, 0)
     install_disk = optional(string, "/dev/sda")
     user_disks = optional(list(object({
       type = optional(string)

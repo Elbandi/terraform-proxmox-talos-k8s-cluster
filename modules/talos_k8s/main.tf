@@ -78,6 +78,7 @@ resource "talos_machine_configuration_apply" "controlplane" {
         kernel_modules                     = each.value.kernel_modules
         node_labels                        = each.value.node_labels
         cni                                = var.cluster.cni
+        swap_size                          = each.value.swap_size
         enable_lvm                         = anytrue(flatten([for i, n in var.nodes : [for j, d in n.user_disks : d.type == "lvm"]]))
         lvm_setup = templatefile("${path.module}/kubernetes/lvm-setup.yaml", {
           lvm_label_node = true
@@ -148,6 +149,7 @@ resource "talos_machine_configuration_apply" "worker" {
         time_server        = each.value.time_server
         kernel_modules     = each.value.kernel_modules
         node_labels        = each.value.node_labels
+        swap_size          = each.value.swap_size
         enable_lvm         = anytrue([for i, v in each.value.user_disks : v.type == "lvm"])
         custom_network     = each.value.custom_network
         cloud_provider     = var.cluster.cloud_provider

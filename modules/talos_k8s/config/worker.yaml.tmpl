@@ -38,6 +38,11 @@ machine:
     nodeIP:
       validSubnets:
         - ${ cidrhost(format("%s/24", node_ip), 0) }/24
+    extraConfig:
+%{ if swap_size > 0 ~}
+      memorySwap:
+        swapBehavior: LimitedSwap
+%{ endif ~}
     extraArgs:
 %{ if cloud_provider != "none" ~}
       cloud-provider: external
@@ -74,6 +79,17 @@ auto: off
 %{ if custom_network != null ~}
 ---
 ${indent(0, custom_network)}
+%{ endif ~}
+%{ if swap_size > 0 ~}
+---
+apiVersion: v1alpha1
+kind: SwapVolumeConfig
+name: swap1
+provisioning:
+    diskSelector:
+        match: 'disk.serial == "swap"'
+    minSize: 1
+    grow: true
 %{ endif ~}
 %{ for ip, hosts in extra_hosts ~}
 ---

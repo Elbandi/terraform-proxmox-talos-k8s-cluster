@@ -89,6 +89,15 @@ resource "vsphere_virtual_machine" "vms" {
     label = "Hard disk 1"
     size  = each.value.system_disk.size
   }
+  dynamic "disk" {
+    for_each = each.value.swap_size > 0 ? [1] : []
+    content {
+      label       = "Hard disk 2"
+      size        = each.value.swap_size
+      unit_number = 1
+      #        serial       = disk.value.type != null ? "${disk.value.type}-${disk.value.name}-${disk.key + 1}" : null
+    }
+  }
   datastore_id = data.vsphere_datastore.datastore[each.value.datastore_id].id
 
   clone {
@@ -125,9 +134,9 @@ resource "vsphere_virtual_machine" "vms" {
   dynamic "disk" {
     for_each = each.value.user_disks
     content {
-      label       = "Hard disk ${disk.key + 2}"
+      label       = "Hard disk ${disk.key + each.value.swap_size > 0 ? 3 : 2}"
       size        = disk.value.size
-      unit_number = disk.key + 1
+      unit_number = disk.key + 4
       #        serial       = disk.value.type != null ? "${disk.value.type}-${disk.value.name}-${disk.key + 1}" : null
     }
   }

@@ -58,6 +58,7 @@ resource "vsphere_virtual_machine" "vms" {
   #     enabled = true
   #   }
 
+  firmware                         = each.value.bios == "uefi" ? "efi" : "bios"
   num_cpus                         = each.value.cpu
   cpu_hot_add_enabled              = true
   cpu_hot_remove_enabled           = true

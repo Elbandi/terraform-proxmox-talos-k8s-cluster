@@ -39,6 +39,7 @@ variable "vms" {
     schematic_id     = optional(string, "")
     datastore_id     = optional(string, "local-lvm")
     ip               = string
+    bios             = optional(string, "uefi")
     cpu              = number
     memory_dedicated = number
     swap_size        = optional(number, 0)
@@ -59,6 +60,10 @@ variable "vms" {
     disk_file_format = optional(string, "raw")
     gpu              = optional(string)
   }))
+  validation {
+    condition     = alltrue([for v in var.vms : contains(["legacy", "uefi"], v.bios)])
+    error_message = format("Allowed values for bios are: %s.", join(", ", ["legacy", "uefi"]))
+  }
 }
 
 variable "pci" {

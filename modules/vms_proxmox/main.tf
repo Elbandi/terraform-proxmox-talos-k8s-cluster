@@ -10,7 +10,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
   vm_id   = each.value.vm_id
   pool_id = var.proxmox.pool != null ? data.proxmox_virtual_environment_pool.pool[0].id : null
 
-  bios          = "ovmf"
+  bios          = each.value.bios == "uefi" ? "ovmf" : "seabios"
   machine       = "q35"
   scsi_hardware = "virtio-scsi-single"
 
@@ -34,11 +34,14 @@ resource "proxmox_virtual_environment_vm" "vms" {
   }
 
   # EFI disk
-  efi_disk {
-    datastore_id = each.value.datastore_id
-    file_format  = each.value.disk_file_format
-    type         = "4m"
-    # pre_enrolled_keys = true
+  dynamic "efi_disk" {
+    for_each = each.value.bios == "uefi" ? [1] : []
+    content {
+      datastore_id = each.value.datastore_id
+      file_format  = each.value.disk_file_format
+      type         = "4m"
+      # pre_enrolled_keys = true
+    }
   }
 
   # system disk

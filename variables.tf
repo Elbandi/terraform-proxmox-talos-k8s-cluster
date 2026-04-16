@@ -58,6 +58,7 @@ variable "vms" {
     schematic_id          = optional(string, "")
     datastore_id          = optional(string, "local-lvm")
     ip                    = optional(string)
+    bios                  = optional(string, "uefi")
     cpu                   = number
     memory_dedicated      = number
     swap_size             = optional(number, 0)

@@ -1,7 +1,10 @@
 ---
-# global:
-#   domain: 
 fullnameOverride: argocd-helm
+
+global:
+  domain: ${argocd.domain}
+  logging:
+    level: debug
 
 configs:
   params:

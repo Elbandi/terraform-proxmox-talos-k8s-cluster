@@ -1,9 +1,10 @@
 variable "argocd" {
   description = "ArgoCD configuration"
   type = object({
-    admin_password = string
     namespace      = string
     chart_version  = string
+    domain         = string
+    admin_password = string
     oidc_config = optional(object({
       name             = string
       issuer           = string

@@ -76,7 +76,13 @@ variable "vms" {
       name         = optional(string)
       cache        = optional(bool, true)
     })), [])
-    install_disk     = optional(string, "/dev/sda")
+    install_disk = optional(string, "/dev/sda")
+    extra_mounts = optional(list(object({
+      destination = string
+      type        = string
+      source      = string
+      options     = optional(list(string), [])
+    })), [])
     disk_file_format = optional(string, "raw")
     gpu              = optional(string)
     time_server      = optional(string)

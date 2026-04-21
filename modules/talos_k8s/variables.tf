@@ -44,6 +44,12 @@ variable "nodes" {
       dev  = optional(string)
       name = optional(string)
     })), [])
+    extra_mounts = optional(list(object({
+      destination = string
+      type        = string
+      source      = string
+      options     = optional(list(string), [])
+    })), [])
     gpu            = optional(string)
     time_server    = optional(string)
     kernel_modules = optional(list(string), [])

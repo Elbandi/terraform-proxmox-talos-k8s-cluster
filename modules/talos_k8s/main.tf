@@ -79,16 +79,18 @@ resource "talos_machine_configuration_apply" "controlplane" {
         node_labels                        = each.value.node_labels
         cni                                = var.cluster.cni
         swap_size                          = each.value.swap_size
+        mounts                             = [for i, v in each.value.user_disks : v.type == "mount"]
         enable_lvm                         = anytrue(flatten([for i, n in var.nodes : [for j, d in n.user_disks : d.type == "lvm"]]))
         lvm_setup = templatefile("${path.module}/kubernetes/lvm-setup.yaml", {
           lvm_label_node = true
         })
-        pod_subnet     = var.cluster.pod_subnet
-        service_subnet = var.cluster.service_subnet
-        custom_network = each.value.custom_network
-        cloud_provider = var.cluster.cloud_provider
-        extra_hosts    = var.cluster.extra_hosts
-        registries     = var.cluster.registries
+        pod_subnet           = var.cluster.pod_subnet
+        service_subnet       = var.cluster.service_subnet
+        custom_network       = each.value.custom_network
+        cloud_provider       = var.cluster.cloud_provider
+        extra_hosts          = var.cluster.extra_hosts
+        registries           = var.cluster.registries
+        kubelet_extra_mounts = each.value.extra_mounts
       }),
     ],
     var.cluster.cni == "cilium" ? [
@@ -141,20 +143,22 @@ resource "talos_machine_configuration_apply" "worker" {
   config_patches = concat(
     [
       templatefile("${path.module}/config/worker.yaml.tmpl", {
-        talos_version      = var.cluster.talos_version
-        kubernetes_version = var.cluster.kubernetes_version
-        hostname           = each.key
-        node_ip            = each.value.ip
-        install_disk       = each.value.install_disk
-        time_server        = each.value.time_server
-        kernel_modules     = each.value.kernel_modules
-        node_labels        = each.value.node_labels
-        swap_size          = each.value.swap_size
-        enable_lvm         = anytrue([for i, v in each.value.user_disks : v.type == "lvm"])
-        custom_network     = each.value.custom_network
-        cloud_provider     = var.cluster.cloud_provider
-        extra_hosts        = var.cluster.extra_hosts
-        registries         = var.cluster.registries
+        talos_version        = var.cluster.talos_version
+        kubernetes_version   = var.cluster.kubernetes_version
+        hostname             = each.key
+        node_ip              = each.value.ip
+        install_disk         = each.value.install_disk
+        time_server          = each.value.time_server
+        kernel_modules       = each.value.kernel_modules
+        node_labels          = each.value.node_labels
+        swap_size            = each.value.swap_size
+        mounts               = [for i, v in each.value.user_disks : v if v.type == "mount"]
+        enable_lvm           = anytrue([for i, v in each.value.user_disks : v.type == "lvm"])
+        custom_network       = each.value.custom_network
+        cloud_provider       = var.cluster.cloud_provider
+        extra_hosts          = var.cluster.extra_hosts
+        registries           = var.cluster.registries
+        kubelet_extra_mounts = each.value.extra_mounts
       }),
     ],
     # Add GPU patch if this worker node has a GPU

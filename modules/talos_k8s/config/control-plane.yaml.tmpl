@@ -46,6 +46,18 @@ machine:
     nodeIP:
       validSubnets:
         - ${ cidrhost(format("%s/24", node_ip), 0) }/24
+%{ if length(kubelet_extra_mounts) > 0 ~}
+    extraMounts:
+%{ for k, mount in kubelet_extra_mounts ~}
+      - destination: ${mount.destination}
+        type: ${mount.type}
+        source: ${mount.source}
+        options:
+%{ for option in mount.options ~}
+          - ${option}
+%{ endfor ~}
+%{ endfor ~}
+%{ endif ~}
     extraConfig:
 %{ if swap_size > 0 ~}
       memorySwap:
@@ -185,5 +197,16 @@ kind: RegistryAuthConfig
 name: ${host}
 username: ${auth.username}
 password: ${auth.password}
+%{ endfor ~}
+%{ for k, mount in mounts ~}
+---
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: ${mount.name}
+provisioning:
+    diskSelector:
+        match: 'disk.serial.startsWith("mount-${mount.name}")'
+    minSize: 1
+    grow: true
 %{ endfor ~}
 %{ endif ~}

@@ -60,6 +60,7 @@ variable "vms" {
     ip                    = optional(string)
     bios                  = optional(string, "uefi")
     cpu                   = number
+    numa                  = optional(bool, true)
     memory_dedicated      = number
     swap_size             = optional(number, 0)
     system_disk = object({

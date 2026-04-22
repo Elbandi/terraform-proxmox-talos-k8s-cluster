@@ -21,7 +21,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
   cpu {
     cores = each.value.cpu
     type  = "host"
-    numa  = true
+    numa  = each.value.numa
   }
 
   memory {
